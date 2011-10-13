@@ -1,0 +1,42 @@
+---
+abstract: 'Moose wrapper for queued downloads via Net::Curl & AnyEvent'
+author:
+  - 'Stanislaw Pusep <stas@sysd.org>'
+build_requires:
+  English: 0
+  File::Find: 0
+  File::Temp: 0
+  Test::HTTP::Server: 0
+  Test::More: 0
+  perl: 5.006
+  strict: 0
+  warnings: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.30
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.112621'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: AnyEvent-Net-Curl-Queued
+requires:
+  AnyEvent: 0
+  Carp: 0
+  Digest::SHA: 0
+  HTTP::Response: 0
+  Moose: 0
+  Moose::Util::TypeConstraints: 0
+  MooseX::NonMoose: 0
+  Net::Curl::Easy: 0
+  Net::Curl::Multi: 0
+  Net::Curl::Share: 0
+  Scalar::Util: 0
+  URI: 0
+  common::sense: 0
+  perl: 5.010
+resources:
+  bugtracker: https://github.com/creaktive/AnyEvent-Net-Curl-Queued/issues
+  homepage: https://github.com/creaktive/AnyEvent-Net-Curl-Queued
+  repository: git://github.com/creaktive/AnyEvent-Net-Curl-Queued.git
+version: 0.001
