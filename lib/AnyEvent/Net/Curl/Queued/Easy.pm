@@ -17,7 +17,7 @@ extends 'Net::Curl::Easy';
 
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -69,8 +69,12 @@ has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', def
 sub unique {
     my ($self) = @_;
 
+    # make URL-friendly Base64
+    my $digest = $self->sha->clone->b64digest;
+    $digest =~ tr{+/}{-_};
+
     # return the signature
-    return $self->sha->clone->b64digest =~ tr{+/}{-_}r;
+    return $digest;
 }
 
 
@@ -247,7 +251,11 @@ sub _curl_const {
     $key = "${suffix}_${key}" if $key !~ m{^${suffix}_};
 
     my $val;
-    eval "\$val = Net::Curl::Easy::$key;";  ## no critic
+    eval {
+        no strict 'refs';   ## no critic
+        my $const_name = 'Net::Curl::Easy::' . $key;
+        $val = *$const_name->();
+    };
     carp "Invalid libcurl constant: $key" if $@;
 
     return $val;
@@ -271,7 +279,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
@@ -403,7 +411,7 @@ Clones the instance, for re-enqueuing purposes.
 
 You are supposed to build your own stuff after/around/before this method using L<method modifiers|Moose::Manual::MethodModifiers>.
 
-=head2 setopt(OPTION => VALUE, [OPTION => VALUE])
+=head2 setopt(OPTION => VALUE [, OPTION => VALUE])
 
 Extends L<Net::Curl::Easy> C<setopt()>, allowing option lists:
 
@@ -423,7 +431,9 @@ Or even shorter:
         verbose             => 1,
     );
 
-=head2 getinfo
+Complete list of options: L<http://curl.haxx.se/libcurl/c/curl_easy_setopt.html>
+
+=head2 getinfo(VAR_NAME [, VAR_NAME])
 
 Extends L<Net::Curl::Easy> C<getinfo()> so it is able to get several variables at once;
 C<HashRef> parameter under void context will fill respective values in the C<HashRef>:
@@ -447,6 +457,8 @@ C<ArrayRef> parameter will return a list:
 
     my ($content_type, $speed_download, $primary_ip) =
         $self->getinfo([qw(content_type speed_download primary_ip)]);
+
+Complete list of options: L<http://curl.haxx.se/libcurl/c/curl_easy_getinfo.html>
 
 =head1 SEE ALSO
 

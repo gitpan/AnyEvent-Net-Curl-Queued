@@ -8,7 +8,7 @@ use Carp qw(confess);
 use Moose;
 use Net::Curl::Easy;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 
 has stamp       => (is => 'rw', isa => 'Int', default => time);
@@ -44,7 +44,11 @@ sub sum {
         my $val = 0;
 
         if ($from->isa('AnyEvent::Net::Curl::Queued::Easy')) {
-            eval '$val = $from->getinfo(Net::Curl::Easy::CURLINFO_' . uc($type) . ')';  ## no critic
+            eval {
+                no strict 'refs';   ## no critic
+                my $const_name = 'Net::Curl::Easy::CURLINFO_' . uc($type);
+                $val = $from->getinfo(*$const_name->());
+            };
             confess "Unable to getinfo(CURLINFO_\U$type\E): $@" if $@;
         } elsif (ref($from) eq __PACKAGE__) {
             $val = $from->stats->{$type};
@@ -76,7 +80,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
@@ -84,7 +88,7 @@ version 0.001
     use Data::Printer;
 
     my $q = AnyEvent::Net::Curl::Queued->new;
-    ...;
+    #...
     $q->wait;
 
     p $q->stats;

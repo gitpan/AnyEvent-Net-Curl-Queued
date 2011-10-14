@@ -17,8 +17,6 @@ my %WriteMakefileArgs = (
     "File::Temp" => 0,
     "Test::HTTP::Server" => 0,
     "Test::More" => 0,
-    "perl" => "5.006",
-    "strict" => 0,
     "warnings" => 0
   },
   "CONFIGURE_REQUIRES" => {
@@ -41,9 +39,10 @@ my %WriteMakefileArgs = (
     "Net::Curl::Share" => 0,
     "Scalar::Util" => 0,
     "URI" => 0,
-    "common::sense" => 0
+    "common::sense" => 0,
+    "strict" => 0
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }

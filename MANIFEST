@@ -17,6 +17,7 @@ t/00-compile.t
 t/00-load.t
 t/01-net-curl-compatibility.t
 t/02-stats.t
+t/03-easy-bulk-getset.t
 t/03-easy.t
 t/04-queued.t
 t/10-loopback.t
@@ -34,6 +35,5 @@ t/release-pod-linkcheck.t
 t/release-pod-syntax.t
 t/release-portability.t
 t/release-synopsis.t
-t/release-test-version.t
 t/release-unused-vars.t
 weaver.ini
