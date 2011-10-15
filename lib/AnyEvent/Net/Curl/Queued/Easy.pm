@@ -17,7 +17,7 @@ extends 'Net::Curl::Easy';
 
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -124,7 +124,7 @@ sub has_error {
 }
 
 
-sub finish {
+sub _finish {
     my ($self, $result) = @_;
 
     # populate results
@@ -146,6 +146,9 @@ sub finish {
         $self->res->message($msg);
     }
 
+    # wrap around the extendible interface
+    $self->finish($result);
+
     # re-enqueue the request
     if ($self->has_error and $self->retry > 1) {
         $self->queue->unique->{$self->unique} = 0;
@@ -158,6 +161,12 @@ sub finish {
 
     # move queue
     $self->queue->start;
+}
+
+sub finish {
+    my ($self, $result) = @_;
+
+    # dummy
 }
 
 
@@ -279,7 +288,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 

@@ -24,7 +24,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 10.0);
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -117,7 +117,7 @@ around socket_action => sub {
     while (my ($msg, $easy, $result) = $self->info_read) {
         if ($msg == Net::Curl::Multi::CURLMSG_DONE) {
             $self->remove_handle($easy);
-            $easy->finish($result);
+            $easy->_finish($result);
         } else {
             confess "I don't know what to do with message $msg";
         }
@@ -128,8 +128,8 @@ around socket_action => sub {
 override add_handle => sub {
     my ($self, $easy) = @_;
 
-    confess "Can't finish()"
-        unless $easy->can('finish');
+    confess "Can't _finish()"
+        unless $easy->can('_finish');
 
     # Calling socket_action with default arguments will trigger
     # socket callback and register IO events.
@@ -166,7 +166,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Moose
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 

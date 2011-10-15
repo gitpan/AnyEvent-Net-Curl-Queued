@@ -11,7 +11,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 
 has cv          => (is => 'ro', isa => 'AnyEvent::CondVar', default => sub { AE::cv }, lazy => 1);
@@ -85,7 +85,7 @@ sub empty {
 
     $self->cv->send
         if
-            $self->stats->stats->{total} > 1
+            $self->stats->stats->{total} > 0
             and $self->count == 0
             and $self->multi->handles == 0;
 }
@@ -152,7 +152,7 @@ AnyEvent::Net::Curl::Queued - Moose wrapper for queued downloads via Net::Curl &
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 
