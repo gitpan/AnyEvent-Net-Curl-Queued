@@ -17,7 +17,7 @@ extends 'Net::Curl::Easy';
 
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.004'; # VERSION
+our $VERSION = '0.005'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -135,15 +135,16 @@ sub _finish {
     if ($self->http_response) {
         $self->res(
             HTTP::Response->parse(
-                ${$self->header}
-                . ${$self->data}
+                (${$self->header} // "\n")
+                . (${$self->data} // '')
             )
         );
 
-        my $msg = $self->res->message;
-        $msg =~ s/^\s+//s;
-        $msg =~ s/\s+$//s;
-        $self->res->message($msg);
+        if (my $msg = $self->res->message) {
+            $msg =~ s/^\s+//s;
+            $msg =~ s/\s+$//s;
+            $self->res->message($msg);
+        }
     }
 
     # wrap around the extendible interface
@@ -288,7 +289,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SYNOPSIS
 

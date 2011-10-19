@@ -19,8 +19,10 @@ t/01-net-curl-compatibility.t
 t/02-stats.t
 t/03-easy-bulk-getset.t
 t/03-easy.t
+t/04-queued-single.t
 t/04-queued.t
 t/10-loopback.t
+t/20-recursion.t
 t/author-critic.t
 t/release-cpan-changes.t
 t/release-dist-manifest.t

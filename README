@@ -3,7 +3,7 @@ NAME
     Net::Curl & AnyEvent
 
 VERSION
-    version 0.004
+    version 0.005
 
 SYNOPSIS
         #!/usr/bin/env perl

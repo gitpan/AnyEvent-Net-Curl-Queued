@@ -8,7 +8,7 @@ use Carp qw(confess);
 use Moose;
 use Net::Curl::Easy;
 
-our $VERSION = '0.004'; # VERSION
+our $VERSION = '0.005'; # VERSION
 
 
 has stamp       => (is => 'rw', isa => 'Int', default => time);
@@ -80,7 +80,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SYNOPSIS
 
