@@ -6,8 +6,10 @@ META.yml
 Makefile.PL
 README
 dist.ini
+eg/benchmark.pl
 eg/crawl-apache.pl
 eg/fetch-urls.pl
+eg/queue
 lib/AnyEvent/Net/Curl/Queued.pm
 lib/AnyEvent/Net/Curl/Queued/Easy.pm
 lib/AnyEvent/Net/Curl/Queued/Multi.pm
@@ -22,6 +24,7 @@ t/03-easy.t
 t/04-queued-single.t
 t/04-queued.t
 t/10-loopback.t
+t/11-loopback-cb.t
 t/20-recursion.t
 t/author-critic.t
 t/release-cpan-changes.t

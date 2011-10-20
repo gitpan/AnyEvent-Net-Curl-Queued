@@ -17,7 +17,7 @@ extends 'Net::Curl::Easy';
 
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -64,6 +64,9 @@ has retry       => (is => 'rw', isa => 'Int', default => 5);
 
 
 has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
+
+
+has [qw(on_init on_finish)] => (is => 'ro', isa => 'CodeRef');
 
 
 sub unique {
@@ -113,6 +116,9 @@ sub init {
     my $header;
     $self->setopt(Net::Curl::Easy::CURLOPT_WRITEHEADER, \$header);
     $self->header(\$header);
+
+    # call the optional callback
+    $self->on_init->(@_) if ref($self->on_init) eq 'CODE';
 }
 
 
@@ -167,7 +173,8 @@ sub _finish {
 sub finish {
     my ($self, $result) = @_;
 
-    # dummy
+    # call the optional callback
+    $self->on_finish->($self, $result) if ref($self->on_finish) eq 'CODE';
 }
 
 
@@ -251,8 +258,10 @@ around getinfo => sub {
 
 sub _curl_const {
     my ($key, $suffix) = @_;
+    state $cache = {};
 
     return $key if looks_like_number($key);
+    return $cache->{$suffix . $key} if exists $cache->{$suffix . $key};
 
     $key =~ s{^Net::Curl::Easy::}{}i;
     $key =~ y{-}{_};
@@ -268,6 +277,7 @@ sub _curl_const {
     };
     carp "Invalid libcurl constant: $key" if $@;
 
+    $cache->{$suffix . $key} = $val;
     return $val;
 }
 
@@ -289,7 +299,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -382,6 +392,16 @@ Number of retries (default: 5).
 =head2 stats
 
 L<AnyEvent::Net::Curl::Queued::Stats> instance.
+
+=head2 on_init
+
+Callback you can define instead of extending the C<init> method.
+Almost the same as C<after init =E<gt> sub { ... }>
+
+=head2 on_finish
+
+Callback you can define instead of extending the C<finish> method.
+Almost the same as C<after finish =E<gt> sub { ... }>
 
 =head1 METHODS
 

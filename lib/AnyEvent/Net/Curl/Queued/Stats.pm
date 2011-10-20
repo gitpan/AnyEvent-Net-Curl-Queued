@@ -8,7 +8,7 @@ use Carp qw(confess);
 use Moose;
 use Net::Curl::Easy;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 
 has stamp       => (is => 'rw', isa => 'Int', default => time);
@@ -36,6 +36,24 @@ has stats       => (
 );
 
 
+has const_map   => (is => 'rw', isa => 'HashRef[Num]', default => sub { {} });
+
+sub BUILD {
+    my ($self) = @_;
+
+    foreach my $type (keys %{$self->stats}) {
+        next if $type eq 'total';
+
+        eval {
+            no strict 'refs';   ## no critic
+            my $const_name = 'Net::Curl::Easy::CURLINFO_' . uc($type);
+            $self->const_map->{$type} = *$const_name->();
+        };
+        confess "Unable to obtain CURLINFO_\U$type\E value: $@" if $@;
+    }
+}
+
+
 sub sum {
     my ($self, $from) = @_;
 
@@ -44,12 +62,7 @@ sub sum {
         my $val = 0;
 
         if ($from->isa('AnyEvent::Net::Curl::Queued::Easy')) {
-            eval {
-                no strict 'refs';   ## no critic
-                my $const_name = 'Net::Curl::Easy::CURLINFO_' . uc($type);
-                $val = $from->getinfo(*$const_name->());
-            };
-            confess "Unable to getinfo(CURLINFO_\U$type\E): $@" if $@;
+            $val = $from->getinfo($self->const_map->{$type});
         } elsif (ref($from) eq __PACKAGE__) {
             $val = $from->stats->{$type};
         }
@@ -80,7 +93,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -125,6 +138,10 @@ C<HashRef[Num]> with statistics:
     total_time
 
 Variable names are from respective L<curl_easy_getinfo()|http://curl.haxx.se/libcurl/c/curl_easy_getinfo.html> accessors.
+
+=head2 const_map
+
+Cache of L<curl_easy_getinfo()|http://curl.haxx.se/libcurl/c/curl_easy_getinfo.html> constants.
 
 =head1 METHODS
 
