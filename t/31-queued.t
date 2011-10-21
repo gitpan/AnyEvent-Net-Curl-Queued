@@ -17,6 +17,7 @@ isa_ok($q, qw(Net::Curl::Easy AnyEvent::Net::Curl::Queued));
 can_ok($q, qw(
     add
     append
+    completed
     count
     cv
     dequeue
@@ -41,16 +42,20 @@ ok($q->timeout  == 10.0, 'default timeout()');
 isa_ok($q->share, 'Net::Curl::Share');
 isa_ok($q->stats, 'AnyEvent::Net::Curl::Queued::Stats');
 
-$q->append(
-    sub {
-        AnyEvent::Net::Curl::Queued::Easy->new({
-            initial_url => $server->uri . 'echo/head',
-        })
+for my $method (qw(append prepend)) {
+    for my $i (1 .. $q->max) {
+        $q->$method(
+            sub {
+                AnyEvent::Net::Curl::Queued::Easy->new({
+                    initial_url => $server->uri . 'repeat/' . ($i * 10) . '/' . $method,
+                })
+            }
+        );
     }
-);
+}
 
 $q->wait;
 
-ok($q->stats->stats->{total} == 1, 'single GET');
+ok($q->completed == $q->max * 2, 'simple GET');
 
 done_testing(12);

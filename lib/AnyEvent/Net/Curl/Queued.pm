@@ -11,7 +11,18 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.006'; # VERSION
+our $VERSION = '0.007'; # VERSION
+
+
+has completed  => (
+    traits      => ['Counter'],
+    is          => 'ro',
+    isa         => 'Int',
+    default     => 0,
+    handles     => {qw{
+        inc_completed inc
+    }},
+);
 
 
 has cv          => (is => 'ro', isa => 'AnyEvent::CondVar', default => sub { AE::cv }, lazy => 1);
@@ -85,7 +96,7 @@ sub empty {
 
     $self->cv->send
         if
-            $self->stats->stats->{total} > 0
+            $self->completed > 0
             and $self->count == 0
             and $self->multi->handles == 0;
 }
@@ -152,7 +163,7 @@ AnyEvent::Net::Curl::Queued - Moose wrapper for queued downloads via Net::Curl &
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
@@ -268,21 +279,29 @@ However, socket handling and header parsing add a lots of overhead.
 The script F<eg/benchmark.pl> compares L<AnyEvent::Net::Curl::Queued> against several other download agents.
 Only L<AnyEvent::Net::Curl::Queued> itself, L<AnyEvent::Curl::Multi> and L<lftp|http://lftp.yar.ru/> support parallel connections;
 thus, L<forks|AnyEvent::Util/fork_call> are used to reproduce the same behaviour for the remaining agents.
+Both L<AnyEvent::Curl::Multi> and L<LWP::Curl> are frontends for L<WWW::Curl>.
 The download target is a local copy of the L<Apache documentation|http://httpd.apache.org/docs/2.2/>.
 
-                                URL/second LWP::UserAgent HTTP::Tiny HTTP::Lite AnyEvent::Net::Curl::Queued AnyEvent::Curl::Multi lftp wget
-    LWP::UserAgent                    23.2             --       -93%       -95%                        -99%                  -99% -99% -100%
-    HTTP::Tiny                       348.6          1404%         --       -19%                        -79%                  -80% -86%  -97%
-    HTTP::Lite                       429.3          1753%        23%         --                        -74%                  -76% -83%  -97%
-    AnyEvent::Net::Curl::Queued     1648.1          7023%       373%       284%                          --                   -7% -34%  -88%
-    AnyEvent::Curl::Multi           1769.8          7544%       408%       312%                          7%                    -- -29%  -87%
-    lftp                            2500.9         10711%       619%       483%                         52%                   41%   --  -81%
-    wget                           13253.5         57145%      3705%      2989%                        704%                  649% 429%    --
+                                URL/s WWW::Mechanize LWP::UserAgent HTTP::Lite HTTP::Tiny AnyEvent::Curl::Multi  lftp AnyEvent::Net::Curl::Queued AnyEvent::HTTP  curl LWP::Curl  wget
+    WWW::Mechanize                196             --           -60%       -80%       -85%                  -86%  -88%                        -89%           -92%  -97%      -97% -100%
+    LWP::UserAgent                484           148%             --       -51%       -63%                  -66%  -70%                        -72%           -80%  -93%      -93%  -99%
+    HTTP::Lite                    989           405%           104%         --       -25%                  -32%  -39%                        -42%           -59%  -85%      -86%  -99%
+    HTTP::Tiny                   1312           569%           170%        33%         --                   -9%  -19%                        -23%           -46%  -80%      -82%  -99%
+    AnyEvent::Curl::Multi        1446           638%           198%        46%        10%                    --  -10%                        -16%           -41%  -78%      -80%  -98%
+    lftp                         1609           722%           232%        63%        23%                   11%    --                         -6%           -34%  -75%      -77%  -98%
+    AnyEvent::Net::Curl::Queued  1713           773%           253%        73%        30%                   18%    6%                          --           -30%  -74%      -76%  -98%
+    AnyEvent::HTTP               2437          1144%           403%       146%        86%                   69%   51%                         42%             --  -63%      -66%  -97%
+    curl                         6512          3228%          1244%       559%       397%                  351%  305%                        281%           167%    --       -8%  -93%
+    LWP::Curl                    7110          3524%          1364%       618%       442%                  391%  341%                        315%           191%    9%        --  -92%
+    wget                        88875         45240%         18215%      8877%      6675%                 6045% 5418%                       5092%          3544% 1262%     1151%    --
 
-L<AnyEvent::Curl::Multi> really has less overhead at the cost of very primitive queue manager
-(no retries and large queues waste too much RAM due to lack of lazy initialization).
+L<AnyEvent::HTTP> & L<LWP::Curl> are actually faster, but both lack queueing/retry.
 
 =head1 ATTRIBUTES
+
+=head2 completed
+
+Count completed requests.
 
 =head2 cv
 

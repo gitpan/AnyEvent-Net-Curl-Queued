@@ -16,6 +16,7 @@ my %WriteMakefileArgs = (
     "File::Find" => 0,
     "File::Temp" => 0,
     "Test::HTTP::Server" => 0,
+    "Test::Kwalitee" => 0,
     "Test::More" => 0,
     "warnings" => 0
   },
@@ -31,6 +32,7 @@ my %WriteMakefileArgs = (
     "Carp" => 0,
     "Digest::SHA" => 0,
     "HTTP::Response" => 0,
+    "Memoize" => 0,
     "Moose" => 0,
     "Moose::Util::TypeConstraints" => 0,
     "MooseX::NonMoose" => 0,
@@ -42,7 +44,7 @@ my %WriteMakefileArgs = (
     "common::sense" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.006",
+  "VERSION" => "0.007",
   "test" => {
     "TESTS" => "t/*.t"
   }

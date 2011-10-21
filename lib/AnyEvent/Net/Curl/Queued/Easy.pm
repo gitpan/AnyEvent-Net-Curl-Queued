@@ -10,14 +10,14 @@ use HTTP::Response;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::NonMoose;
-use Scalar::Util qw(looks_like_number);
 use URI;
 
 extends 'Net::Curl::Easy';
 
+use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.006'; # VERSION
+our $VERSION = '0.007'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -64,6 +64,7 @@ has retry       => (is => 'rw', isa => 'Int', default => 5);
 
 
 has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
+has use_stats   => (is => 'ro', isa => 'Bool', default => 0);
 
 
 has [qw(on_init on_finish)] => (is => 'ro', isa => 'CodeRef');
@@ -163,8 +164,13 @@ sub _finish {
     }
 
     # update stats
-    $self->stats->sum($self);
-    $self->queue->stats->sum($self);
+    if ($self->use_stats) {
+        $self->stats->sum($self);
+        $self->queue->stats->sum($self);
+    }
+
+    # request completed (even if returned error!)
+    $self->queue->inc_completed;
 
     # move queue
     $self->queue->start;
@@ -207,7 +213,7 @@ around setopt => sub {
         }
 
         while (my ($key, $val) = each %param) {
-            $key = _curl_const($key, 'CURLOPT');
+            $key = AnyEvent::Net::Curl::Const::opt($key);
             $self->$orig($key, $val) if defined $key;
         }
     } else {
@@ -224,7 +230,7 @@ around getinfo => sub {
         when ('ARRAY') {
             my @val;
             for my $name (@{$_[0]}) {
-                my $const = _curl_const($name, 'CURLINFO');
+                my $const = AnyEvent::Net::Curl::Const::info($name);
                 next unless defined $const;
                 push @val, $self->$orig($const);
             }
@@ -232,7 +238,7 @@ around getinfo => sub {
         } when ('HASH') {
             my %val;
             for my $name (keys %{$_[0]}) {
-                my $const = _curl_const($name, 'CURLINFO');
+                my $const = AnyEvent::Net::Curl::Const::info($name);
                 next unless defined $const;
                 $val{$name} = $self->$orig($const);
             }
@@ -247,7 +253,7 @@ around getinfo => sub {
                 return \%val;
             }
         } when ('') {
-            my $const = _curl_const($_[0], 'CURLINFO');
+            my $const = AnyEvent::Net::Curl::Const::info($_[0]);
             return defined $const ? $self->$orig($const) : $const;
         } default {
             carp "getinfo() expects array/hash reference or string!";
@@ -255,32 +261,6 @@ around getinfo => sub {
         }
     }
 };
-
-sub _curl_const {
-    my ($key, $suffix) = @_;
-    state $cache = {};
-
-    return $key if looks_like_number($key);
-    return $cache->{$suffix . $key} if exists $cache->{$suffix . $key};
-
-    $key =~ s{^Net::Curl::Easy::}{}i;
-    $key =~ y{-}{_};
-    $key =~ s{\W}{}g;
-    $key = uc $key;
-    $key = "${suffix}_${key}" if $key !~ m{^${suffix}_};
-
-    my $val;
-    eval {
-        no strict 'refs';   ## no critic
-        my $const_name = 'Net::Curl::Easy::' . $key;
-        $val = *$const_name->();
-    };
-    carp "Invalid libcurl constant: $key" if $@;
-
-    $cache->{$suffix . $key} = $val;
-    return $val;
-}
-
 
 
 no Moose;
@@ -299,7 +279,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
@@ -392,6 +372,11 @@ Number of retries (default: 5).
 =head2 stats
 
 L<AnyEvent::Net::Curl::Queued::Stats> instance.
+
+=head2 use_stats
+
+Set to true to enable stats computation.
+Note that extracting C<libcurl> time/size data degrades performance slightly.
 
 =head2 on_init
 
