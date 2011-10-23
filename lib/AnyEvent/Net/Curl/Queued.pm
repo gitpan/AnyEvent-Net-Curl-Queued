@@ -11,7 +11,10 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.007'; # VERSION
+our $VERSION = '0.008'; # VERSION
+
+
+has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
 
 
 has completed  => (
@@ -59,9 +62,6 @@ has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', def
 
 has timeout     => (is => 'ro', isa => 'Num', default => 10.0);
 
-
-has unique      => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
-
 sub BUILD {
     my ($self) = @_;
 
@@ -104,6 +104,8 @@ sub empty {
 
 
 sub add {
+    state $unique = {};
+
     my ($self, $worker) = @_;
 
     # vivify the worker
@@ -115,8 +117,8 @@ sub add {
     $worker->init;
 
     # check if already processed
-    if (my $unique = $worker->unique) {
-        return if ++$self->unique->{$unique} > 1;
+    if (not $self->allow_dups and not $worker->force) {
+        return if ++$unique->{$worker->unique} > 1;
     }
 
     # fire
@@ -163,7 +165,7 @@ AnyEvent::Net::Curl::Queued - Moose wrapper for queued downloads via Net::Curl &
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
@@ -299,6 +301,13 @@ L<AnyEvent::HTTP> & L<LWP::Curl> are actually faster, but both lack queueing/ret
 
 =head1 ATTRIBUTES
 
+=head2 allow_dups
+
+Allow duplicate requests (default: false).
+By default, requests to the same URL (more precisely, requests with the same L<signature|AnyEvent::Net::Curl::Queued::Easy/sha> are issued only once.
+To seed POST parameters, you must extend the L<AnyEvent::Net::Curl::Queued::Easy> class.
+Setting C<allow_dups> to true value disables request checks.
+
 =head2 completed
 
 Count completed requests.
@@ -352,10 +361,6 @@ L<AnyEvent::Net::Curl::Queued::Stats> instance.
 =head2 timeout
 
 Timeout (default: 10 seconds).
-
-=head2 unique
-
-C<HashRef> to store request unique identifiers to prevent repeated accesses.
 
 =head1 METHODS
 

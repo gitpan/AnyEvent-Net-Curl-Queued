@@ -3,7 +3,7 @@ NAME
     Net::Curl & AnyEvent
 
 VERSION
-    version 0.007
+    version 0.008
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -129,6 +129,13 @@ DESCRIPTION
     queueing/retry.
 
 ATTRIBUTES
+  allow_dups
+    Allow duplicate requests (default: false). By default, requests to the
+    same URL (more precisely, requests with the same signature are issued
+    only once. To seed POST parameters, you must extend the
+    AnyEvent::Net::Curl::Queued::Easy class. Setting "allow_dups" to true
+    value disables request checks.
+
   completed
     Count completed requests.
 
@@ -161,10 +168,6 @@ ATTRIBUTES
 
   timeout
     Timeout (default: 10 seconds).
-
-  unique
-    "HashRef" to store request unique identifiers to prevent repeated
-    accesses.
 
 METHODS
   start()

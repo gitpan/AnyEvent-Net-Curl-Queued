@@ -17,26 +17,25 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.007'; # VERSION
+our $VERSION = '0.008'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
 
 coerce 'AnyEvent::Net::Curl::Queued::Easy::URI'
-    => from 'Object'
-        => via {
-            $_->isa('URI')
-                ? $_
-                : Params::Coerce::coerce('URI', $_);
-        }
-    => from 'Str'
-        => via { URI->new($_) };
+    => from 'Any'
+        => via { URI->new("$_") }
+    => from 'URI'
+        => via { $_ };
 
 
 has curl_result => (is => 'rw', isa => 'Net::Curl::Easy::Code');
 
 
 has data        => (is => 'rw', isa => 'Ref');
+
+
+has force       => (is => 'ro', isa => 'Bool', default => 0);
 
 
 has header      => (is => 'rw', isa => 'Ref');
@@ -159,7 +158,6 @@ sub _finish {
 
     # re-enqueue the request
     if ($self->has_error and $self->retry > 1) {
-        $self->queue->unique->{$self->unique} = 0;
         $self->queue->queue_push($self->clone);
     }
 
@@ -190,8 +188,17 @@ sub clone {
     $param //= {};
 
     my $class = ($self->meta->class_precedence_list)[0];
-    $param->{initial_url}   = $self->initial_url;
-    $param->{retry}         = $self->retry - 1;
+    $param->{$_} = $self->$_()
+        for qw(
+            http_response
+            initial_url
+            on_finish
+            on_init
+            retry
+            use_stats
+        );
+    --$param->{retry};
+    $param->{force} = 1;
 
     return sub { $class->new($param) };
 }
@@ -279,7 +286,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
@@ -337,6 +344,10 @@ libcurl return code (C<Net::Curl::Easy::Code>).
 
 Receive buffer.
 
+=head2 force
+
+Force request processing, despite uniqueness signature.
+
 =head2 header
 
 Header buffer.
@@ -360,6 +371,7 @@ L<AnyEvent::Net::Curl::Queued> circular reference.
 =head2 sha
 
 Uniqueness detection helper.
+Setup via C<sign> and access through C<unique>.
 
 =head2 res
 
@@ -425,6 +437,23 @@ You are supposed to build your own stuff after/around/before this method using L
 Clones the instance, for re-enqueuing purposes.
 
 You are supposed to build your own stuff after/around/before this method using L<method modifiers|Moose::Manual::MethodModifiers>.
+For example, to implement proper POST re-enqueuing:
+
+    has method => (is => 'ro', isa => 'Str', default => 'GET');
+    has post_content => (is => 'ro', isa => 'Str');
+
+    ...;
+
+    around clone => sub {
+        my $orig = shift;
+        my $self = shift;
+        my $param = shift;
+
+        $param->{method} = $self->method;
+        $param->{post_content} = $self->post_content;
+
+        return $self->$orig($param);
+    };
 
 =head2 setopt(OPTION => VALUE [, OPTION => VALUE])
 
