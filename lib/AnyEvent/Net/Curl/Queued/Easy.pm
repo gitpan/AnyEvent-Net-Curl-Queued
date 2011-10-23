@@ -17,7 +17,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -192,13 +192,14 @@ sub clone {
         for qw(
             http_response
             initial_url
-            on_finish
-            on_init
             retry
             use_stats
         );
     --$param->{retry};
     $param->{force} = 1;
+
+    $param->{on_init}   = $self->on_init if ref($self->on_init) eq 'CODE';
+    $param->{on_finish} = $self->on_finish if ref($self->on_finish) eq 'CODE';
 
     return sub { $class->new($param) };
 }
@@ -286,7 +287,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -424,6 +425,15 @@ You are supposed to build your own stuff after/around/before this method using L
 Error handling: if C<has_error> returns true, the request is re-enqueued (until the retries number is exhausted).
 
 You are supposed to build your own stuff after/around/before this method using L<method modifiers|Moose::Manual::MethodModifiers>.
+For example, to retry on server error (HTTP 5xx response code):
+
+    around has_error => sub {
+        my $orig = shift;
+        my $self = shift;
+
+        return 1 if $self->$orig(@_);
+        return 1 if $self->getinfo('response_code') =~ m{^5[0-9]{2}$};
+    };
 
 =head2 finish($result)
 

@@ -11,7 +11,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -34,7 +34,7 @@ has cv          => (is => 'ro', isa => 'AnyEvent::CondVar', default => sub { AE:
 subtype 'MaxConn'
     => as Int
     => where { $_ >= 1 };
-has max         => (is => 'ro', isa => 'MaxConn', default => 4);
+has max         => (is => 'rw', isa => 'MaxConn', default => 4);
 
 
 has multi       => (is => 'rw', isa => 'AnyEvent::Net::Curl::Queued::Multi');
@@ -165,7 +165,7 @@ AnyEvent::Net::Curl::Queued - Moose wrapper for queued downloads via Net::Curl &
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 

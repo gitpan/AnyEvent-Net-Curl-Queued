@@ -1,5 +1,7 @@
 Changelog for AnyEvent::Net::Curl::Queued (full version at https://github.com/creaktive/AnyEvent-Net-Curl-Queued)
 
+0.009     2011-10-23
+
 0.008     2011-10-22
 
 0.007     2011-10-21
