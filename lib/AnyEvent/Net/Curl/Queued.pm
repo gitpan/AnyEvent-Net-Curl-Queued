@@ -11,7 +11,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.009'; # VERSION
+our $VERSION = '0.010'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -60,7 +60,7 @@ has share       => (is => 'ro', isa => 'Net::Curl::Share', default => sub { Net:
 has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
 
 
-has timeout     => (is => 'ro', isa => 'Num', default => 10.0);
+has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
 sub BUILD {
     my ($self) = @_;
@@ -165,7 +165,7 @@ AnyEvent::Net::Curl::Queued - Moose wrapper for queued downloads via Net::Curl &
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 
@@ -360,7 +360,7 @@ L<AnyEvent::Net::Curl::Queued::Stats> instance.
 
 =head2 timeout
 
-Timeout (default: 10 seconds).
+Timeout (default: 60 seconds).
 
 =head1 METHODS
 

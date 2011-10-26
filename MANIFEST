@@ -11,11 +11,14 @@ eg/benchmark.pl
 eg/crawl-apache.pl
 eg/fetch-urls.pl
 eg/queue
+eg/simple.pl
 lib/AnyEvent/Net/Curl/Const.pm
 lib/AnyEvent/Net/Curl/Queued.pm
 lib/AnyEvent/Net/Curl/Queued/Easy.pm
 lib/AnyEvent/Net/Curl/Queued/Multi.pm
 lib/AnyEvent/Net/Curl/Queued/Stats.pm
+lib/YADA.pm
+lib/YADA/Worker.pm
 perlcritic.rc
 t/00-compile.t
 t/00-load.t
@@ -29,6 +32,7 @@ t/31-queued.t
 t/40-loopback.t
 t/41-loopback-cb.t
 t/42-loopback-retry.t
+t/43-loopback-yada.t
 t/50-recursion.t
 t/author-critic.t
 t/release-cpan-changes.t

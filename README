@@ -3,7 +3,7 @@ NAME
     Net::Curl & AnyEvent
 
 VERSION
-    version 0.009
+    version 0.010
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -167,7 +167,7 @@ ATTRIBUTES
     AnyEvent::Net::Curl::Queued::Stats instance.
 
   timeout
-    Timeout (default: 10 seconds).
+    Timeout (default: 60 seconds).
 
 METHODS
   start()

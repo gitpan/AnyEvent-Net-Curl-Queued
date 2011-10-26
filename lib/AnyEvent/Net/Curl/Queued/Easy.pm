@@ -17,7 +17,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.009'; # VERSION
+our $VERSION = '0.010'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -59,7 +59,7 @@ has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Diges
 has res         => (is => 'rw', isa => 'HTTP::Response');
 
 
-has retry       => (is => 'rw', isa => 'Int', default => 5);
+has retry       => (is => 'rw', isa => 'Int', default => 10);
 
 
 has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
@@ -287,7 +287,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 
@@ -380,7 +380,7 @@ Encapsulated L<HTTP::Response> instance, if L</http_response> was set.
 
 =head2 retry
 
-Number of retries (default: 5).
+Number of retries (default: 10).
 
 =head2 stats
 
