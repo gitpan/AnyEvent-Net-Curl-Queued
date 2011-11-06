@@ -13,6 +13,9 @@ use Net::Curl::Multi;
 extends 'Net::Curl::Multi';
 
 
+has active      => (is => 'rw', isa => 'Int', default => -1);
+
+
 has pool        => (is => 'ro', isa => 'HashRef[Ref]', default => sub { {} });
 
 
@@ -22,9 +25,9 @@ has timer       => (is => 'rw', isa => 'Any');
 has max         => (is => 'ro', isa => 'Num', default => 4);
 
 
-has timeout     => (is => 'ro', isa => 'Num', default => 10.0);
+has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -97,8 +100,8 @@ sub _cb_timer {
         # must not wait too long (more than a few seconds perhaps)
         # before you call curl_multi_perform() again.
 
-        $self->timer(AE::timer $self->timeout, $self->timeout, $cb)
-            if $self->handles;
+        $self->timer(AE::timer 1, 1, $cb)
+            if $self->handles > 0;
     } else {
         # This will trigger timeouts if there are any.
         $self->timer(AE::timer $timeout_ms / 1000, 0, $cb);
@@ -112,8 +115,9 @@ around socket_action => sub {
     my $orig = shift;
     my $self = shift;
 
-    my $active = $self->$orig(@_);
+    $self->active($self->$orig(@_));
 
+    my $i = 0;
     while (my ($msg, $easy, $result) = $self->info_read) {
         if ($msg == Net::Curl::Multi::CURLMSG_DONE) {
             $self->remove_handle($easy);
@@ -121,15 +125,23 @@ around socket_action => sub {
         } else {
             confess "I don't know what to do with message $msg";
         }
+    } continue {
+        ++$i;
     }
+
+    $self->active($self->active - $i);
 };
 
 
-override add_handle => sub {
-    my ($self, $easy) = @_;
+around add_handle => sub {
+    my $orig = shift;
+    my $self = shift;
+    my $easy = shift;
 
     confess "Can't _finish()"
         unless $easy->can('_finish');
+
+    my $r = $self->$orig($easy);
 
     # Calling socket_action with default arguments will trigger
     # socket callback and register IO events.
@@ -146,7 +158,7 @@ override add_handle => sub {
         $self->socket_action;
     };
 
-    super($easy);
+    return $r;
 };
 
 
@@ -166,7 +178,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Moose
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -182,6 +194,10 @@ version 0.010
 This module extends the L<Net::Curl::Multi> class through L<MooseX::NonMoose> and adds L<AnyEvent> handlers.
 
 =head1 ATTRIBUTES
+
+=head2 active
+
+Currently active sockets.
 
 =head2 pool
 

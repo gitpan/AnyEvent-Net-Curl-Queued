@@ -3,7 +3,7 @@ NAME
     Net::Curl & AnyEvent
 
 VERSION
-    version 0.010
+    version 0.011
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -169,6 +169,10 @@ ATTRIBUTES
   timeout
     Timeout (default: 60 seconds).
 
+  watchdog
+    The last resort against the non-deterministic chaos of evil lurking
+    sockets.
+
 METHODS
   start()
     Populate empty request slots with workers from the queue.
@@ -200,6 +204,10 @@ METHODS
 
   wait()
     Shortcut to "$queue->cv->recv".
+
+CAVEAT
+    The *"Attempt to free unreferenced scalar: SV 0xdeadbeef during global
+    destruction."* message on finalization is mostly harmless.
 
 SEE ALSO
     *   AnyEvent

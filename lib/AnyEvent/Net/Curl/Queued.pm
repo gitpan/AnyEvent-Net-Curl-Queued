@@ -11,7 +11,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -62,6 +62,9 @@ has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', def
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
+
+has watchdog    => (is => 'rw', isa => 'Ref');
+
 sub BUILD {
     my ($self) = @_;
 
@@ -79,6 +82,12 @@ sub BUILD {
 
 sub start {
     my ($self) = @_;
+
+    # watchdog
+    $self->watchdog(AE::timer 1, 1, sub {
+        $self->multi->perform;
+        $self->empty;
+    });
 
     # populate queue
     $self->add($self->dequeue)
@@ -165,7 +174,7 @@ AnyEvent::Net::Curl::Queued - Moose wrapper for queued downloads via Net::Curl &
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -362,6 +371,10 @@ L<AnyEvent::Net::Curl::Queued::Stats> instance.
 
 Timeout (default: 60 seconds).
 
+=head2 watchdog
+
+The last resort against the non-deterministic chaos of evil lurking sockets.
+
 =head1 METHODS
 
 =head2 start()
@@ -397,6 +410,10 @@ For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you d
 =head2 wait()
 
 Shortcut to C<$queue-E<gt>cv-E<gt>recv>.
+
+=head1 CAVEAT
+
+The I<"Attempt to free unreferenced scalar: SV 0xdeadbeef during global destruction."> message on finalization is mostly harmless.
 
 =head1 SEE ALSO
 

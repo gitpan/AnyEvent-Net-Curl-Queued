@@ -7,7 +7,7 @@ use Moose;
 
 extends 'AnyEvent::Net::Curl::Queued::Easy';
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 
 no Moose;
@@ -26,7 +26,7 @@ YADA::Worker - "Yet Another Download Accelerator Worker": alias for AnyEvent::Ne
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 
