@@ -9,7 +9,7 @@ extends 'AnyEvent::Net::Curl::Queued';
 
 use YADA::Worker;
 
-our $VERSION = '0.011'; # VERSION
+our $VERSION = '0.012'; # VERSION
 
 
 no Moose;
@@ -28,7 +28,7 @@ YADA - "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 SYNOPSIS
 

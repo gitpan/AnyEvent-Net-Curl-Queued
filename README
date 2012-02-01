@@ -3,7 +3,7 @@ NAME
     Net::Curl & AnyEvent
 
 VERSION
-    version 0.011
+    version 0.012
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -203,7 +203,7 @@ METHODS
         });
 
   wait()
-    Shortcut to "$queue->cv->recv".
+    Process queue.
 
 CAVEAT
     The *"Attempt to free unreferenced scalar: SV 0xdeadbeef during global

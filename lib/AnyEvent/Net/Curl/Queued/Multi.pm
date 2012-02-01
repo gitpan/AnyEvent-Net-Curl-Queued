@@ -27,7 +27,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.011'; # VERSION
+our $VERSION = '0.012'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -178,7 +178,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Moose
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 SYNOPSIS
 

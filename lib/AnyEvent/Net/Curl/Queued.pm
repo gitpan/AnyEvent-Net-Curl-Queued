@@ -11,7 +11,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.011'; # VERSION
+our $VERSION = '0.012'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -28,7 +28,7 @@ has completed  => (
 );
 
 
-has cv          => (is => 'ro', isa => 'AnyEvent::CondVar', default => sub { AE::cv }, lazy => 1);
+has cv          => (is => 'rw', isa => 'AnyEvent::CondVar', default => sub { AE::cv }, lazy => 1);
 
 
 subtype 'MaxConn'
@@ -154,7 +154,17 @@ sub prepend {
 sub wait {
     my ($self) = @_;
 
+    # handle queue
     $self->cv->recv;
+
+    # reload
+    $self->cv(AE::cv);
+    $self->multi(
+        AnyEvent::Net::Curl::Queued::Multi->new({
+            max         => $self->max,
+            timeout     => $self->timeout,
+        })
+    );
 }
 
 
@@ -174,7 +184,7 @@ AnyEvent::Net::Curl::Queued - Moose wrapper for queued downloads via Net::Curl &
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 SYNOPSIS
 
@@ -409,7 +419,7 @@ For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you d
 
 =head2 wait()
 
-Shortcut to C<$queue-E<gt>cv-E<gt>recv>.
+Process queue.
 
 =head1 CAVEAT
 
