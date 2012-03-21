@@ -3,16 +3,16 @@ package YADA;
 
 
 use common::sense;
-use Moose;
+use Any::Moose;
 
 extends 'AnyEvent::Net::Curl::Queued';
 
 use YADA::Worker;
 
-our $VERSION = '0.012'; # VERSION
+our $VERSION = '0.013'; # VERSION
 
 
-no Moose;
+no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -28,7 +28,7 @@ YADA - "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 SYNOPSIS
 

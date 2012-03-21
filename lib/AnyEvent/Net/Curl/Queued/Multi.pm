@@ -1,13 +1,13 @@
 package AnyEvent::Net::Curl::Queued::Multi;
-# ABSTRACT: Net::Curl::Multi wrapped by Moose
+# ABSTRACT: Net::Curl::Multi wrapped by Any::Moose
 
 
 use common::sense;
 
 use AnyEvent;
 use Carp qw(confess);
-use Moose;
-use MooseX::NonMoose;
+use Any::Moose;
+use Any::Moose qw(X::NonMoose);
 use Net::Curl::Multi;
 
 extends 'Net::Curl::Multi';
@@ -27,7 +27,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.012'; # VERSION
+our $VERSION = '0.013'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -39,6 +39,10 @@ sub BUILD {
     $self->setopt(Net::Curl::Multi::CURLMOPT_SOCKETFUNCTION     => \&_cb_socket);
     $self->setopt(Net::Curl::Multi::CURLMOPT_TIMERFUNCTION      => \&_cb_timer);
 }
+
+################# HACK #################
+around BUILDARGS => sub { $_[2] // {} };
+################# HACK #################
 
 # socket callback: will be called by curl any time events on some
 # socket must be updated
@@ -111,11 +115,14 @@ sub _cb_timer {
 }
 
 
-around socket_action => sub {
-    my $orig = shift;
+#around socket_action => sub {
+#    my $orig = shift;
+#    my $self = shift;
+sub socket_action {
     my $self = shift;
 
-    $self->active($self->$orig(@_));
+    #$self->active($self->$orig(@_));
+    $self->active($self->SUPER::socket_action(@_));
 
     my $i = 0;
     while (my ($msg, $easy, $result) = $self->info_read) {
@@ -133,15 +140,19 @@ around socket_action => sub {
 };
 
 
-around add_handle => sub {
-    my $orig = shift;
+#around add_handle => sub {
+#    my $orig = shift;
+#    my $self = shift;
+#    my $easy = shift;
+sub add_handle {
     my $self = shift;
     my $easy = shift;
 
     confess "Can't _finish()"
         unless $easy->can('_finish');
 
-    my $r = $self->$orig($easy);
+    #my $r = $self->$orig($easy);
+    my $r = $self->SUPER::add_handle($easy);
 
     # Calling socket_action with default arguments will trigger
     # socket callback and register IO events.
@@ -162,7 +173,7 @@ around add_handle => sub {
 };
 
 
-no Moose;
+no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -174,11 +185,11 @@ __END__
 
 =head1 NAME
 
-AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Moose
+AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 SYNOPSIS
 
@@ -240,7 +251,7 @@ L<AnyEvent::Net::Curl::Queued>
 
 =item *
 
-L<MooseX::NonMoose>
+L<MooseX::NonMoose> / L<MouseX::NonMoose>
 
 =item *
 

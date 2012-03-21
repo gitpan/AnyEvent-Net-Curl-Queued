@@ -1,5 +1,5 @@
 package AnyEvent::Net::Curl::Queued::Easy;
-# ABSTRACT: Net::Curl::Easy wrapped by Moose
+# ABSTRACT: Net::Curl::Easy wrapped by Any::Moose
 
 
 use common::sense;
@@ -7,9 +7,9 @@ use common::sense;
 use Carp qw(carp confess);
 use Digest::SHA;
 use HTTP::Response;
-use Moose;
-use Moose::Util::TypeConstraints;
-use MooseX::NonMoose;
+use Any::Moose;
+use Any::Moose qw(::Util::TypeConstraints);
+use Any::Moose qw(X::NonMoose);
 use URI;
 
 extends 'Net::Curl::Easy';
@@ -17,7 +17,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.012'; # VERSION
+our $VERSION = '0.013'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -68,6 +68,10 @@ has use_stats   => (is => 'ro', isa => 'Bool', default => 0);
 
 has [qw(on_init on_finish)] => (is => 'ro', isa => 'CodeRef');
 
+################# HACK #################
+around BUILDARGS => sub { $_[2] // {} };
+################# HACK #################
+
 
 sub unique {
     my ($self) = @_;
@@ -98,7 +102,8 @@ sub init {
     $self->setopt(Net::Curl::Easy::CURLOPT_URL,         $url->as_string);
 
     # salt
-    $self->sign(($self->meta->class_precedence_list)[0]);
+    #$self->sign(($self->meta->class_precedence_list)[0]);
+    $self->sign($self->meta->name);
     # URL; GET parameters included
     $self->sign($url->as_string);
 
@@ -205,8 +210,10 @@ sub clone {
 }
 
 
-around setopt => sub {
-    my $orig = shift;
+#around setopt => sub {
+#    my $orig = shift;
+#    my $self = shift;
+sub setopt {
     my $self = shift;
 
     if (@_) {
@@ -222,7 +229,8 @@ around setopt => sub {
 
         while (my ($key, $val) = each %param) {
             $key = AnyEvent::Net::Curl::Const::opt($key);
-            $self->$orig($key, $val) if defined $key;
+            #$self->$orig($key, $val) if defined $key;
+            $self->SUPER::setopt($key, $val) if defined $key;
         }
     } else {
         carp "Specify at least one OPTION/VALUE pair!";
@@ -230,8 +238,10 @@ around setopt => sub {
 };
 
 
-around getinfo => sub {
-    my $orig = shift;
+#around getinfo => sub {
+#    my $orig = shift;
+#    my $self = shift;
+sub getinfo {
     my $self = shift;
 
     given (ref($_[0])) {
@@ -240,7 +250,8 @@ around getinfo => sub {
             for my $name (@{$_[0]}) {
                 my $const = AnyEvent::Net::Curl::Const::info($name);
                 next unless defined $const;
-                push @val, $self->$orig($const);
+                #push @val, $self->$orig($const);
+                push @val, $self->SUPER::getinfo($const);
             }
             return @val;
         } when ('HASH') {
@@ -248,7 +259,8 @@ around getinfo => sub {
             for my $name (keys %{$_[0]}) {
                 my $const = AnyEvent::Net::Curl::Const::info($name);
                 next unless defined $const;
-                $val{$name} = $self->$orig($const);
+                #$val{$name} = $self->$orig($const);
+                $val{$name} = $self->SUPER::getinfo($const);
             }
 
             # write back to HashRef if called under void context
@@ -262,7 +274,8 @@ around getinfo => sub {
             }
         } when ('') {
             my $const = AnyEvent::Net::Curl::Const::info($_[0]);
-            return defined $const ? $self->$orig($const) : $const;
+            #return defined $const ? $self->$orig($const) : $const;
+            return defined $const ? $self->SUPER::getinfo($const) : $const;
         } default {
             carp "getinfo() expects array/hash reference or string!";
             return;
@@ -271,7 +284,7 @@ around getinfo => sub {
 };
 
 
-no Moose;
+no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -283,18 +296,18 @@ __END__
 
 =head1 NAME
 
-AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moose
+AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 SYNOPSIS
 
     package MyIEDownloader;
     use common::sense;
 
-    use Moose;
+    use Any::Moose;
     use Net::Curl::Easy qw(/^CURLOPT_/);
 
     extends 'AnyEvent::Net::Curl::Queued::Easy';
@@ -326,7 +339,7 @@ version 0.012
         return 1 if $self->getinfo(Net::Curl::Easy::CURLINFO_RESPONSE_CODE) =~ m{^5[0-9]{2}$};
     };
 
-    no Moose;
+    no Any::Moose;
     __PACKAGE__->meta->make_immutable;
 
     1;
@@ -520,11 +533,11 @@ Complete list of options: L<http://curl.haxx.se/libcurl/c/curl_easy_getinfo.html
 
 =item *
 
-L<Moose>
+L<Any::Moose>
 
 =item *
 
-L<MooseX::NonMoose>
+L<MooseX::NonMoose> / L<MouseX::NonMoose>
 
 =item *
 

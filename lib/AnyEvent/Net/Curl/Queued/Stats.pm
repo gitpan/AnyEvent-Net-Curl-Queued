@@ -5,11 +5,11 @@ package AnyEvent::Net::Curl::Queued::Stats;
 use common::sense;
 
 use Carp qw(confess);
-use Moose;
+use Any::Moose;
 
 use AnyEvent::Net::Curl::Const;
 
-our $VERSION = '0.012'; # VERSION
+our $VERSION = '0.013'; # VERSION
 
 
 has stamp       => (is => 'rw', isa => 'Int', default => time);
@@ -59,7 +59,7 @@ sub sum {
 }
 
 
-no Moose;
+no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -75,7 +75,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 SYNOPSIS
 
