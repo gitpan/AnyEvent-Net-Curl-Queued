@@ -11,7 +11,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -80,6 +80,7 @@ sub BUILD {
 
     $self->share->setopt(Net::Curl::Share::CURLSHOPT_SHARE, Net::Curl::Share::CURL_LOCK_DATA_COOKIE);   # 2
     $self->share->setopt(Net::Curl::Share::CURLSHOPT_SHARE, Net::Curl::Share::CURL_LOCK_DATA_DNS);      # 3
+    eval { $self->share->setopt(Net::Curl::Share::CURLSHOPT_SHARE, Net::Curl::Share::CURL_LOCK_DATA_SSL_SESSION) };
 }
 
 
@@ -188,7 +189,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 SYNOPSIS
 

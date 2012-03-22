@@ -37,6 +37,7 @@ my %WriteMakefileArgs = (
     "HTTP::Response" => 0,
     "Memoize" => 0,
     "Mouse::Util::TypeConstraints" => 0,
+    "MouseX::NativeTraits" => 0,
     "MouseX::NonMoose" => 0,
     "Net::Curl::Easy" => 0,
     "Net::Curl::Multi" => 0,
@@ -46,7 +47,7 @@ my %WriteMakefileArgs = (
     "common::sense" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.013",
+  "VERSION" => "0.014",
   "test" => {
     "TESTS" => "t/*.t"
   }
