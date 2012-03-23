@@ -5,6 +5,7 @@ MANIFEST.SKIP
 META.yml
 Makefile.PL
 README
+bin/yada
 dist.ini
 eg/CrawlApache.pm
 eg/benchmark.pl

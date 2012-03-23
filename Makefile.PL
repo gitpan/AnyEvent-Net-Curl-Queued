@@ -15,7 +15,6 @@ my %WriteMakefileArgs = (
     "English" => 0,
     "File::Find" => 0,
     "File::Temp" => 0,
-    "Moose" => 0,
     "Test::HTTP::Server" => 0,
     "Test::Kwalitee" => 0,
     "Test::More" => 0,
@@ -26,28 +25,35 @@ my %WriteMakefileArgs = (
     "ExtUtils::MakeMaker" => "6.30"
   },
   "DISTNAME" => "AnyEvent-Net-Curl-Queued",
-  "EXE_FILES" => [],
+  "EXE_FILES" => [
+    "bin/yada"
+  ],
   "LICENSE" => "perl",
   "NAME" => "AnyEvent::Net::Curl::Queued",
   "PREREQ_PM" => {
     "Any::Moose" => 0,
     "AnyEvent" => 0,
     "Carp" => 0,
+    "Config" => 0,
     "Digest::SHA" => 0,
+    "Getopt::Long" => 0,
     "HTTP::Response" => 0,
     "Memoize" => 0,
+    "MooseX::NonMoose" => 0,
     "Mouse::Util::TypeConstraints" => 0,
     "MouseX::NativeTraits" => 0,
     "MouseX::NonMoose" => 0,
     "Net::Curl::Easy" => 0,
     "Net::Curl::Multi" => 0,
     "Net::Curl::Share" => 0,
+    "Pod::Usage" => 0,
     "Scalar::Util" => 0,
     "URI" => 0,
+    "autodie" => 0,
     "common::sense" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.014",
+  "VERSION" => "0.015",
   "test" => {
     "TESTS" => "t/*.t"
   }

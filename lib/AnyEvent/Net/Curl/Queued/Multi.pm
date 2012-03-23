@@ -27,7 +27,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -189,7 +189,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 SYNOPSIS
 
@@ -265,7 +265,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Stanislaw Pusep.
+This software is copyright (c) 2012 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

@@ -6,7 +6,6 @@ build_requires:
   English: 0
   File::Find: 0
   File::Temp: 0
-  Moose: 0
   Test::HTTP::Server: 0
   Test::Kwalitee: 0
   Test::More: 0
@@ -25,17 +24,22 @@ requires:
   Any::Moose: 0
   AnyEvent: 0
   Carp: 0
+  Config: 0
   Digest::SHA: 0
+  Getopt::Long: 0
   HTTP::Response: 0
   Memoize: 0
+  MooseX::NonMoose: 0
   Mouse::Util::TypeConstraints: 0
   MouseX::NativeTraits: 0
   MouseX::NonMoose: 0
   Net::Curl::Easy: 0
   Net::Curl::Multi: 0
   Net::Curl::Share: 0
+  Pod::Usage: 0
   Scalar::Util: 0
   URI: 0
+  autodie: 0
   common::sense: 0
   perl: 5.010
   strict: 0
@@ -43,4 +47,4 @@ resources:
   bugtracker: https://github.com/creaktive/AnyEvent-Net-Curl-Queued/issues
   homepage: https://github.com/creaktive/AnyEvent-Net-Curl-Queued
   repository: git://github.com/creaktive/AnyEvent-Net-Curl-Queued.git
-version: 0.014
+version: 0.015

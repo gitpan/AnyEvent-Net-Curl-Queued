@@ -17,7 +17,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -102,7 +102,6 @@ sub init {
     $self->setopt(Net::Curl::Easy::CURLOPT_URL,         $url->as_string);
 
     # salt
-    #$self->sign(($self->meta->class_precedence_list)[0]);
     $self->sign($self->meta->name);
     # URL; GET parameters included
     $self->sign($url->as_string);
@@ -192,7 +191,7 @@ sub clone {
 
     $param //= {};
 
-    my $class = ($self->meta->class_precedence_list)[0];
+    my $class = $self->meta->name;
     $param->{$_} = $self->$_()
         for qw(
             http_response
@@ -300,7 +299,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 SYNOPSIS
 
@@ -551,7 +550,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Stanislaw Pusep.
+This software is copyright (c) 2012 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
