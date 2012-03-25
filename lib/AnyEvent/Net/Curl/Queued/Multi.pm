@@ -27,7 +27,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.015'; # VERSION
+our $VERSION = '0.016'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -55,26 +55,32 @@ sub _cb_socket {
     # This is why we register socket events inside multi object
     # and not $easy.
 
-    # deregister old io events
-    delete $self->pool->{"r$socket"};
-    delete $self->pool->{"w$socket"};
-
     # AnyEvent does not support registering a socket for both
     # reading and writing. This is rarely used so there is no
     # harm in separating the events.
 
+    my $keep = 0;
+
     # register read event
     if (($poll == Net::Curl::Multi::CURL_POLL_IN) or ($poll == Net::Curl::Multi::CURL_POLL_INOUT)) {
-        $self->pool->{"r$socket"} = AE::io $socket, 0, sub {
+        $self->pool->{"r$socket"} //= AE::io $socket, 0, sub {
             $self->socket_action($socket, Net::Curl::Multi::CURL_CSELECT_IN);
         };
+        ++$keep;
     }
 
     # register write event
     if (($poll == Net::Curl::Multi::CURL_POLL_OUT) or ($poll == Net::Curl::Multi::CURL_POLL_INOUT)) {
-        $self->pool->{"w$socket"} = AE::io $socket, 1, sub {
+        $self->pool->{"w$socket"} //= AE::io $socket, 1, sub {
             $self->socket_action($socket, Net::Curl::Multi::CURL_CSELECT_OUT);
         };
+        ++$keep;
+    }
+
+    # deregister old io events
+    unless ($keep) {
+        delete $self->pool->{"r$socket"};
+        delete $self->pool->{"w$socket"};
     }
 
     return 1;
@@ -189,7 +195,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.015
+version 0.016
 
 =head1 SYNOPSIS
 

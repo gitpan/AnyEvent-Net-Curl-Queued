@@ -26,10 +26,10 @@ requires:
   Carp: 0
   Config: 0
   Digest::SHA: 0
+  File::Copy: 0
   Getopt::Long: 0
   HTTP::Response: 0
   Memoize: 0
-  MooseX::NonMoose: 0
   Mouse::Util::TypeConstraints: 0
   MouseX::NativeTraits: 0
   MouseX::NonMoose: 0
@@ -47,4 +47,4 @@ resources:
   bugtracker: https://github.com/creaktive/AnyEvent-Net-Curl-Queued/issues
   homepage: https://github.com/creaktive/AnyEvent-Net-Curl-Queued
   repository: git://github.com/creaktive/AnyEvent-Net-Curl-Queued.git
-version: 0.015
+version: 0.016

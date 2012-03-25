@@ -5,12 +5,13 @@ use autodie;
 use common::sense;
 
 use Config;
+use File::Copy;
 use Getopt::Long;
 use Pod::Usage;
 use YADA;
 
 my $VERSION; # stub
-our $VERSION = '0.015'; # VERSION
+our $VERSION = '0.016'; # VERSION
 
 
 GetOptions(
@@ -21,36 +22,31 @@ GetOptions(
     q(maxredirs=i)      => \my $maxredirs,
     q(quiet!)           => \my $quiet,
     q(referer=s)        => \my $referer,
+    q(timeout=i)        => \my $timeout,
     q(useragent=s)      => \my $useragent,
     q(verbose)          => \my $verbose,
-) or pod2usage;
-pod2usage if $help;
+) or pod2usage(q(-verbose) => 1);
+pod2usage(q(-verbose) => 1) if $help;
 
 my @urls = <>;
 chomp @urls;
 
 local $| = 1;
 
-my $q = YADA->new({ max => $max // 4 });
+my $q = YADA->new({
+    max     => $max // 4,
+    timeout => $timeout // 600,
+});
 
 for my $url (@urls) {
-    my $fh;
+    my ($fh, $name);
     $q->append(
         YADA::Worker->new({
             initial_url => $url,
             on_init     => sub {
                 my ($self) = @_;
 
-                my $orig = ($self->initial_url->path_segments)[-1] || q(index.html);
-                $orig .= q(?) . $self->initial_url->query
-                    if $self->initial_url->query;
-                $orig =~ s{[^\w\.\-]}{_}gsx;
-                my ($i, $name) = (1, $orig);
-                for (;;) {
-                    -e $name
-                        ? $name = $orig . q(.) . $i++
-                        : last;
-                }
+                $name = get_filename($self->initial_url);
 
                 open($fh, q(>:raw), $name);
                 $self->setopt(
@@ -72,12 +68,46 @@ for my $url (@urls) {
             on_finish   => sub {
                 my ($self) = @_;
                 close $fh;
+                if ($self->has_error) {
+                    unlink $name;
+                } elsif (${$self->header} =~ m{\bContent-Disposition:\s*attachment;\s*filename=("[^"]*"|[^,"]*)\x{0d}?\x{0a}}isx) {
+                    my $filename = $1;
+                    $filename =~ s/^"//;
+                    $filename =~ s/"$//;
+
+                    move($name, $name . q(.tmp));
+                    my $new_name = get_filename(URI->new(q(file:///) . $filename));
+                    move($name . q(.tmp), $new_name);
+                } elsif ($self->final_url ne $self->initial_url) {
+                    move($name, $name . q(.tmp));
+                    my $new_name = get_filename($self->final_url);
+                    move($name . q(.tmp), $new_name);
+                }
             },
         })
     );
 }
 
 $q->wait;
+
+sub get_filename {
+    my $url = shift->clone->canonical;
+
+    my $orig = ($url->path_segments)[-1] || q(index.html);
+    $orig .= q(?) . $url->query
+        if $url->query;
+
+    $orig =~ s{[^\w\.\-]}{_}gsx;
+    my $i = 1;
+    my $name = $orig;
+    for (;;) {
+        -e $name
+            ? $name = $orig . q(.) . $i++
+            : last;
+    }
+
+    return $orig;
+}
 
 __END__
 =pod
@@ -90,7 +120,7 @@ yada - Yet Another Download Accelerator CLI wrapper
 
 =head1 VERSION
 
-version 0.015
+version 0.016
 
 =head1 SYNOPSIS
 
@@ -143,6 +173,10 @@ Turn off progress output.
 =item --referer
 
 Used to set the C<Referer:> header in the http request sent to the remote server.
+
+=item --timeout
+
+The maximum time in seconds that you allow the transfer operation to take (default: 600 seconds).
 
 =item --useragent
 
