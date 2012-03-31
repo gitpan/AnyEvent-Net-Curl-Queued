@@ -3,13 +3,14 @@ package AnyEvent::Net::Curl::Const;
 
 
 use common::sense;
+use strict;
 
 use Carp qw(carp);
 use Memoize;
 use Net::Curl::Easy;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '0.017'; # VERSION
+our $VERSION = '0.018'; # VERSION
 
 memoize($_) for qw(info opt);
 
@@ -58,7 +59,7 @@ AnyEvent::Net::Curl::Const - Access Net::Curl::* constants by name
 
 =head1 VERSION
 
-version 0.017
+version 0.018
 
 =head1 SYNOPSIS
 

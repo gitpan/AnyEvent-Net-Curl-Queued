@@ -16,7 +16,6 @@ my %WriteMakefileArgs = (
     "File::Find" => 0,
     "File::Temp" => 0,
     "Test::HTTP::Server" => 0,
-    "Test::Kwalitee" => 0,
     "Test::More" => 0,
     "Test::Requires" => 0,
     "warnings" => 0
@@ -53,7 +52,7 @@ my %WriteMakefileArgs = (
     "common::sense" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.017",
+  "VERSION" => "0.018",
   "test" => {
     "TESTS" => "t/*.t"
   }

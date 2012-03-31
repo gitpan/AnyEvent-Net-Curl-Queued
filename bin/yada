@@ -11,7 +11,7 @@ use Pod::Usage;
 use YADA;
 
 my $VERSION; # stub
-our $VERSION = '0.017'; # VERSION
+our $VERSION = '0.018'; # VERSION
 
 
 GetOptions(
@@ -44,7 +44,7 @@ my $q = YADA->new({
 
 for my $url (@urls) {
     my ($fh, $name);
-    $q->append(
+    $q->append(sub {
         YADA::Worker->new({
             initial_url => $url,
             on_init     => sub {
@@ -77,7 +77,7 @@ for my $url (@urls) {
                 #if ($self->has_error or $self->getinfo(q(response_code)) =~ m{^5[0-9]{2}$}) {
                 if ($self->has_error) {
                     eval { unlink $name };
-                } elsif (${$self->header} =~ m{\bContent-Disposition:\s*attachment;\s*filename=("[^"]*"|[^,"]*)\x{0d}?\x{0a}}isx) {
+                } elsif (${$self->header} =~ m{\bContent-Disposition:\s*attachment;\s*filename=("?[\w\.\-]+"?);?}isx) {
                     my $filename = $1;
                     $filename =~ s/^"//;
                     $filename =~ s/"$//;
@@ -92,7 +92,7 @@ for my $url (@urls) {
                 }
             },
         })
-    );
+    });
 }
 
 $q->wait;
@@ -127,7 +127,7 @@ yada - Yet Another Download Accelerator CLI wrapper
 
 =head1 VERSION
 
-version 0.017
+version 0.018
 
 =head1 SYNOPSIS
 
