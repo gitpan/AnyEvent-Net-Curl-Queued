@@ -4,6 +4,7 @@ package AnyEvent::Net::Curl::Queued::Easy;
 
 use common::sense;
 use strict;
+use feature qw(switch);
 
 use Carp qw(carp confess);
 use Digest::SHA;
@@ -18,7 +19,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.018'; # VERSION
+our $VERSION = '0.019'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -300,7 +301,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.018
+version 0.019
 
 =head1 SYNOPSIS
 

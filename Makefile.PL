@@ -17,7 +17,6 @@ my %WriteMakefileArgs = (
     "File::Temp" => 0,
     "Test::HTTP::Server" => 0,
     "Test::More" => 0,
-    "Test::Requires" => 0,
     "warnings" => 0
   },
   "CONFIGURE_REQUIRES" => {
@@ -50,9 +49,10 @@ my %WriteMakefileArgs = (
     "URI" => 0,
     "autodie" => 0,
     "common::sense" => 0,
+    "feature" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.018",
+  "VERSION" => "0.019",
   "test" => {
     "TESTS" => "t/*.t"
   }
