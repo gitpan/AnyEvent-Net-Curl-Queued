@@ -2,8 +2,9 @@ package AnyEvent::Net::Curl::Queued;
 # ABSTRACT: Any::Moose wrapper for queued downloads via Net::Curl & AnyEvent
 
 
-use common::sense;
 use strict;
+use utf8;
+use warnings qw(all);
 
 use AnyEvent;
 use Any::Moose;
@@ -12,7 +13,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.020'; # VERSION
+our $VERSION = '0.021'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -190,14 +191,16 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.020
+version 0.021
 
 =head1 SYNOPSIS
 
     #!/usr/bin/env perl
 
     package CrawlApache;
-    use common::sense;
+    use strict;
+    use utf8;
+    use warnings qw(all);
 
     use HTML::LinkExtor;
     use Any::Moose;
@@ -236,7 +239,9 @@ version 0.020
     1;
 
     package main;
-    use common::sense;
+    use strict;
+    use utf8;
+    use warnings qw(all);
 
     use AnyEvent::Net::Curl::Queued;
 

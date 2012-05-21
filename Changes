@@ -1,41 +1,348 @@
-Changelog for AnyEvent::Net::Curl::Queued (full version at https://github.com/creaktive/AnyEvent-Net-Curl-Queued)
+Changelog for AnyEvent-Net-Curl-Queued
 
-0.020     2012-05-12
+0.021 2012-05-21T17:18:30
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - Changes
 
-0.019     2012-04-05
 
-0.018     2012-03-31
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - removed common::sense
 
-0.017     2012-03-27
+ - using ChangelogFromGit::CPAN::Changes for changelog
 
-0.016     2012-03-25
 
-0.015     2012-03-23
+v0.020 2012-05-12T21:18:51
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - documentation updated with alternatives; prereq common::sense 3.5
 
-0.014     2012-03-22
 
-0.013     2012-03-21
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - Changelog
 
-0.012     2012-02-01
 
-0.011     2011-11-06
+v0.019 2012-04-05T20:26:29
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - Changelog
 
-0.010     2011-10-26
 
-0.009     2011-10-23
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - version bump
 
-0.008     2011-10-22
+ - fix for perl-5.15.9
 
-0.007     2011-10-21
 
-0.006     2011-10-20
+v0.018 2012-03-31T19:04:45
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - minor fixes
 
-0.005     2011-10-19
 
-0.004     2011-10-15
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - Changelog
 
-0.003     2011-10-15
 
-0.002     2011-10-14
+v0.017 2012-03-27T13:54:30
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - Changelog
 
-0.001     2011-10-13
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - ++yada options
+
+ - yada: stupid typo fix
+
+ - benchmark is flawed as YADA also can't tell initialization from fetching
+   apart :(
+
+
+v0.016 2012-03-25T21:46:55
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - yada: filename from content-disposition/location tags
+
+ - better socket watcher recycling
+
+ - benchmark now separates initialization from the download; using remote
+   server
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - yada: get_filename()
+
+ - yada timeout parameter
+
+ - --MooseX::NonMoose from dist.ini
+
+ - verbose yada help
+
+
+v0.015 2012-03-23T15:34:09
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - ++yada CLI tool
+
+ - all tests under Any::Moose
+
+ - meta->class_precedence_list => meta->name
+
+ - ++MooseX::NonMoose to dist.ini
+
+ - eg/benchmark.pl: unsure about the way to use AnyEvent::Curl::Multi;
+   copied from Template::Parser::RemoteInclude
+
+ - Changelog
+
+
+v0.014 2012-03-22T19:38:15
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - MouseX::NativeTraits dependency
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - README version bump
+
+ - ++CURL_LOCK_DATA_SSL_SESSION
+
+ - Changelog
+
+
+v0.013 2012-03-21T20:23:37
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - Changes
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - Replaced Moose by Any::Moose
+
+ - benchmark update
+
+ - documentation update
+
+ - fixes
+
+ - benchmark fix
+
+ - cleanup test
+
+ - uninitialization fixes
+
+ - Mouse prereqs
+
+ - BUILDARGS hack
+
+ - benchmark update
+
+ - Moose => Any::Moose
+
+
+v0.012 2012-02-01T16:33:34
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - "Attempt to free unreferenced scalar: SV 0xdeadbeef." warning was not
+   Test::HTTP::Server's fault in 01-net-curl-compatibility.t, at all.
+
+ - Changes
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - AENCQ object now reusable
+
+ - fixed kwalitee test due to new Parse::RecDescent release
+
+
+v0.011 2011-11-06T19:58:44
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - watchdog executes $self->multi->perform
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - watchdog
+
+ - Changes
+
+
+v0.010 2011-10-26T13:33:09
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - Fixed 'Attempt to free unreferenced scalar: SV 0xdeadbeef during global
+   destruction.' in t/01-net-curl-compatibility.t
+
+ - Changes
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - YADA alias
+
+ - default timeout/retry update
+
+
+v0.009 2011-10-23T12:50:02
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - max connections editable on-fly
+
+ - retry CodeRef fix
+
+ - eg/ fix
+
+ - Changes
+
+
+v0.008 2011-10-23T00:47:12
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - re-enqueued requests are forced to bypass de-duplication filter
+
+ - allow_dups configurable
+
+ - URI coerce typo fix
+
+ - better cloning
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - Changes
+
+
+v0.007 2011-10-21T19:23:14
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - update README.pod
+
+ - reorganize tests
+
+ - optionally use_stats
+
+ - benchmark update
+
+ - Const POD
+
+ - Net::Curl::* constants accessor/cache
+
+ - benchmark fix
+
+ - benchmark update
+
+ - ++curl benchmark
+
+ - Changes
+
+
+v0.006 2011-10-20T14:02:20
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - added nice comparison chart
+
+ - callback tests
+
+ - Easy: constants cache; on_init/on_finish callbacks
+
+ - Stats: precompute constants
+
+ - benchmark example
+
+
+v0.005 2011-10-19T19:49:29
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - Changes
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - new release
+
+ - recursively update queue test
+
+ - single request in queue test
+
+ - fixed HTTP::Response encapsulation warning when response is empty
+
+
+v0.004 2011-10-15T16:40:51
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - stupid termination condition bug
+
+ - Changes
+
+
+v0.003 2011-10-15T15:31:32
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - no CURLINFO_PRIMARY_PORT in older libcurl
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - Changes
+
+
+v0.002 2011-10-14T14:34:05
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - now passes tests on perl-5.10.1
+
+ - getinfo()/setopt() improvements
+
+ - Changes
+
+
+v0.001 2011-10-13T20:44:06
+ [Stanislaw Pusep <creaktive@gmail.com>]
+
+
+
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - documentation
+
+ - cleanup
+
+ - HTTP::Response encapsulation
+
+ - Easy getinfo() wrapper
+
+ - cleanup
+
+ - Easy setopt() wrapper
+
+ - coerce URLs
+
+ - POD
+
+ - end condition fix (used to cause segfault)
+
+ - remove cv->begin/cv->end crap
+
+ - weak_ref hell!!!
+
+ - Queued test
+
+ - Easy test & POD
+
+ - POD[2]
+
+ - POD
+
+ - Stats test
+
+ - Net::Curl compatibility test
+
+ - minor updates
+
+ - AnyEvent::Net::Curl::Queued::Multi max attribute
+
+ - leak fix
+
+ - Dist::Zilla[4]
+
+ - Dist::Zilla[3]
+
+ - Dist::Zilla[2]
+
+ - Dist::Zilla
+
+ - Dist::Zilla
+
+ - cleanup
+
+ - CodeRef hack
+
+ - output
+
+ - cleanup
+
+ - stats
+
+ - retries
+
+ - split
+
+

@@ -2,8 +2,9 @@ package YADA;
 # ABSTRACT: "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 
-use common::sense;
 use strict;
+use utf8;
+use warnings qw(all);
 
 use Any::Moose;
 
@@ -11,7 +12,7 @@ extends 'AnyEvent::Net::Curl::Queued';
 
 use YADA::Worker;
 
-our $VERSION = '0.020'; # VERSION
+our $VERSION = '0.021'; # VERSION
 
 
 no Any::Moose;
@@ -30,12 +31,14 @@ YADA - "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 =head1 VERSION
 
-version 0.020
+version 0.021
 
 =head1 SYNOPSIS
 
     #!/usr/bin/env perl
-    use common::sense;
+    use strict;
+    use utf8;
+    use warnings qw(all);
 
     use YADA;
 

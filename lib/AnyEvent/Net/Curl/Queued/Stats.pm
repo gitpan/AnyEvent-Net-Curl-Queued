@@ -2,15 +2,16 @@ package AnyEvent::Net::Curl::Queued::Stats;
 # ABSTRACT: Connection statistics for AnyEvent::Net::Curl::Queued::Easy
 
 
-use common::sense;
 use strict;
+use utf8;
+use warnings qw(all);
 
 use Carp qw(confess);
 use Any::Moose;
 
 use AnyEvent::Net::Curl::Const;
 
-our $VERSION = '0.020'; # VERSION
+our $VERSION = '0.021'; # VERSION
 
 
 has stamp       => (is => 'rw', isa => 'Int', default => time);
@@ -76,7 +77,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.020
+version 0.021
 
 =head1 SYNOPSIS
 

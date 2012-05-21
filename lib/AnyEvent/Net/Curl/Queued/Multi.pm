@@ -2,8 +2,9 @@ package AnyEvent::Net::Curl::Queued::Multi;
 # ABSTRACT: Net::Curl::Multi wrapped by Any::Moose
 
 
-use common::sense;
 use strict;
+use utf8;
+use warnings qw(all);
 
 use AnyEvent;
 use Carp qw(confess);
@@ -28,7 +29,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.020'; # VERSION
+our $VERSION = '0.021'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -196,7 +197,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.020
+version 0.021
 
 =head1 SYNOPSIS
 

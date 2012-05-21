@@ -7,7 +7,6 @@ build_requires:
   File::Temp: 0
   Test::HTTP::Server: 0
   Test::More: 0
-  warnings: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
@@ -37,11 +36,13 @@ requires:
   Scalar::Util: 0
   URI: 0
   autodie: 0
-  common::sense: 3.5
+  feature: 0
   perl: 5.010
   strict: 0
+  utf8: 0
+  warnings: 0
 resources:
   bugtracker: https://github.com/creaktive/AnyEvent-Net-Curl-Queued/issues
   homepage: https://github.com/creaktive/AnyEvent-Net-Curl-Queued
   repository: git://github.com/creaktive/AnyEvent-Net-Curl-Queued.git
-version: 0.020
+version: 0.021

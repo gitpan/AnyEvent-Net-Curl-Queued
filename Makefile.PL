@@ -15,8 +15,7 @@ my %WriteMakefileArgs = (
     "File::Find" => 0,
     "File::Temp" => 0,
     "Test::HTTP::Server" => 0,
-    "Test::More" => 0,
-    "warnings" => 0
+    "Test::More" => 0
   },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -47,10 +46,12 @@ my %WriteMakefileArgs = (
     "Scalar::Util" => 0,
     "URI" => 0,
     "autodie" => 0,
-    "common::sense" => "3.5",
-    "strict" => 0
+    "feature" => 0,
+    "strict" => 0,
+    "utf8" => 0,
+    "warnings" => 0
   },
-  "VERSION" => "0.020",
+  "VERSION" => "0.021",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -2,15 +2,16 @@ package AnyEvent::Net::Curl::Const;
 # ABSTRACT: Access Net::Curl::* constants by name
 
 
-use common::sense;
 use strict;
+use utf8;
+use warnings qw(all);
 
 use Carp qw(carp);
 use Memoize;
 use Net::Curl::Easy;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '0.020'; # VERSION
+our $VERSION = '0.021'; # VERSION
 
 memoize($_) for qw(info opt);
 
@@ -59,7 +60,7 @@ AnyEvent::Net::Curl::Const - Access Net::Curl::* constants by name
 
 =head1 VERSION
 
-version 0.020
+version 0.021
 
 =head1 SYNOPSIS
 
