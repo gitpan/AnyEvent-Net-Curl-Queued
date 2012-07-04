@@ -21,7 +21,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.021'; # VERSION
+our $VERSION = '0.022'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -303,7 +303,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.021
+version 0.022
 
 =head1 SYNOPSIS
 

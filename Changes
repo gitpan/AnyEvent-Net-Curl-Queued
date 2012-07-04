@@ -1,6 +1,15 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.021 2012-05-21T17:18:30
+0.022 2012-07-04T18:55:23
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - raise CURLMOPT_MAXCONNECTS
+
+ - example fixes
+
+ - eg/CrawlApache.pm using Web::Scraper
+
+
+v0.021 2012-05-21T17:18:08
  [Stanislaw Pusep <creaktive@gmail.com>]
  - Changes
 

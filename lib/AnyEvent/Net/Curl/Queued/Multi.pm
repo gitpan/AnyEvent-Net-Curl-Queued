@@ -29,7 +29,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.021'; # VERSION
+our $VERSION = '0.022'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -37,7 +37,7 @@ sub BUILD {
     confess 'Net::Curl::Multi is missing timer callback, rebuild Net::Curl with libcurl 7.16.0 or newer'
         unless $self->can('CURLMOPT_TIMERFUNCTION');
 
-    $self->setopt(Net::Curl::Multi::CURLMOPT_MAXCONNECTS        => $self->max);
+    $self->setopt(Net::Curl::Multi::CURLMOPT_MAXCONNECTS        => $self->max << 2);
     $self->setopt(Net::Curl::Multi::CURLMOPT_SOCKETFUNCTION     => \&_cb_socket);
     $self->setopt(Net::Curl::Multi::CURLMOPT_TIMERFUNCTION      => \&_cb_timer);
 }
@@ -197,7 +197,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.021
+version 0.022
 
 =head1 SYNOPSIS
 
