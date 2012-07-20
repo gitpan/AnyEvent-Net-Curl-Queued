@@ -32,9 +32,11 @@ my %WriteMakefileArgs = (
     "Carp" => 0,
     "Config" => 0,
     "Digest::SHA" => 0,
+    "Encode" => 0,
     "File::Copy" => 0,
     "Getopt::Long" => 0,
     "HTTP::Response" => 0,
+    "JSON::XS" => 0,
     "Memoize" => 0,
     "Mouse::Util::TypeConstraints" => 0,
     "MouseX::NativeTraits" => 0,
@@ -51,7 +53,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.022",
+  "VERSION" => "0.023",
   "test" => {
     "TESTS" => "t/*.t"
   }

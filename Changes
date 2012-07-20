@@ -1,6 +1,11 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.022 2012-07-04T18:55:23
+0.023 2012-07-20T19:35:11
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - automatically POST as JSON
+
+
+v0.022 2012-07-04T18:54:54
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - raise CURLMOPT_MAXCONNECTS
 
