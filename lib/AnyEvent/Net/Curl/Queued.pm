@@ -13,7 +13,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.023'; # VERSION
+our $VERSION = '0.024'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -43,17 +43,18 @@ has multi       => (is => 'rw', isa => 'AnyEvent::Net::Curl::Queued::Multi');
 
 
 has queue       => (
-    traits      => ['Array'],
     is          => 'ro',
     isa         => 'ArrayRef[Any]',
     default     => sub { [] },
-    handles     => {qw{
-        queue_push      push
-        queue_unshift   unshift
-        dequeue         shift
-        count           count
-    }},
 );
+
+# Moose traits are utterly broken!!!
+
+
+sub queue_push      { push @{shift->queue}, @_ }
+sub queue_unshift   { unshift @{shift->queue}, @_ }
+sub dequeue         { shift @{shift->queue} }
+sub count           { scalar @{shift->queue} }
 
 
 has share       => (is => 'ro', isa => 'Net::Curl::Share', default => sub { Net::Curl::Share->new }, lazy => 1);
@@ -191,7 +192,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.023
+version 0.024
 
 =head1 SYNOPSIS
 
@@ -447,6 +448,11 @@ For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you d
 =head2 wait()
 
 Process queue.
+
+=for Pod::Coverage queue_push
+queue_unshift
+dequeue
+count
 
 =head1 CAVEAT
 

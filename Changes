@@ -1,6 +1,13 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.023 2012-07-20T19:35:11
+0.024 2012-07-23T19:24:03
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - squash setopt calls during init into one
+
+ - Trait::Array is too slow to handle huge queues
+
+
+v0.023 2012-07-20T19:35:04
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - automatically POST as JSON
 

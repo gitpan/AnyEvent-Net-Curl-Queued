@@ -23,7 +23,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.023'; # VERSION
+our $VERSION = '0.024'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -102,30 +102,31 @@ sub sign {
 sub init {
     my ($self) = @_;
 
+    # buffers
+    my $data;
+    $self->data(\$data);
+    my $header;
+    $self->header(\$header);
+
     # fragment mangling
     my $url = $self->initial_url->clone;
     $url->fragment(undef);
-    $self->setopt(Net::Curl::Easy::CURLOPT_URL,         $url->as_string);
+    $self->setopt(
+        Net::Curl::Easy::CURLOPT_URL,           $url->as_string,
+        Net::Curl::Easy::CURLOPT_WRITEDATA,     \$data,
+        Net::Curl::Easy::CURLOPT_WRITEHEADER,   \$header,
+
+        # common parameters
+        ($self->queue ? (
+            Net::Curl::Easy::CURLOPT_SHARE,     $self->queue->share,
+            Net::Curl::Easy::CURLOPT_TIMEOUT,   $self->queue->timeout,
+        ) : ()),
+    );
 
     # salt
     $self->sign($self->meta->name);
     # URL; GET parameters included
     $self->sign($url->as_string);
-
-    # common parameters
-    if ($self->queue) {
-        $self->setopt(Net::Curl::Easy::CURLOPT_SHARE,   $self->queue->share);
-        $self->setopt(Net::Curl::Easy::CURLOPT_TIMEOUT, $self->queue->timeout);
-    }
-
-    # buffers
-    my $data;
-    $self->setopt(Net::Curl::Easy::CURLOPT_WRITEDATA,   \$data);
-    $self->data(\$data);
-
-    my $header;
-    $self->setopt(Net::Curl::Easy::CURLOPT_WRITEHEADER, \$header);
-    $self->header(\$header);
 
     # call the optional callback
     $self->on_init->(@_) if ref($self->on_init) eq 'CODE';
@@ -316,7 +317,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.023
+version 0.024
 
 =head1 SYNOPSIS
 
