@@ -1,6 +1,13 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.024 2012-07-23T19:24:03
+0.025 2012-07-27T18:10:57
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - benchmark fixed
+
+ - removed Memoize dependency
+
+
+v0.024 2012-07-23T19:22:24
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - squash setopt calls during init into one
 
