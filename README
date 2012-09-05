@@ -3,7 +3,7 @@ NAME
     via Net::Curl & AnyEvent
 
 VERSION
-    version 0.025
+    version 0.026
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -197,13 +197,17 @@ ATTRIBUTES
   queue
     "ArrayRef" to the queue. Has the following helper methods:
 
-    *   queue_push: append item at the end of the queue;
+  queue_push
+    Append item at the end of the queue.
 
-    *   queue_unshift: prepend item at the top of the queue;
+  queue_unshift
+    Prepend item at the top of the queue.
 
-    *   dequeue: shift item from the top of the queue;
+  dequeue
+    Shift item from the top of the queue.
 
-    *   count: number of items in queue.
+  count
+    Number of items in queue.
 
   share
     Net::Curl::Share instance.

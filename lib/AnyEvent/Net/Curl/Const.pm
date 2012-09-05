@@ -10,7 +10,7 @@ use Carp qw(carp);
 use Net::Curl::Easy;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '0.025'; # VERSION
+our $VERSION = '0.026'; # VERSION
 
 
 our (%const_info, %const_opt);
@@ -25,7 +25,7 @@ sub info {
 sub opt {
     my ($name) = @_;
     $const_opt{$name} = _curl_const(CURLOPT => $name)
-        unless exists $const_info{$name};
+        unless exists $const_opt{$name};
     return $const_opt{$name};
 }
 
@@ -54,6 +54,7 @@ sub _curl_const {
 1;
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -64,7 +65,7 @@ AnyEvent::Net::Curl::Const - Access Net::Curl::* constants by name
 
 =head1 VERSION
 
-version 0.025
+version 0.026
 
 =head1 SYNOPSIS
 
@@ -143,4 +144,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

@@ -13,7 +13,7 @@ use Pod::Usage;
 use YADA;
 
 my $VERSION; # stub
-our $VERSION = '0.025'; # VERSION
+our $VERSION = '0.026'; # VERSION
 
 
 GetOptions(
@@ -119,6 +119,7 @@ sub get_filename {
 }
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -129,7 +130,7 @@ yada - Yet Another Download Accelerator CLI wrapper
 
 =head1 VERSION
 
-version 0.025
+version 0.026
 
 =head1 SYNOPSIS
 
@@ -242,4 +243,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

@@ -17,6 +17,7 @@ eg/benchmark/http-tiny.pl
 eg/benchmark/lftp.pl
 eg/benchmark/lwp-curl.pl
 eg/benchmark/lwp.pl
+eg/benchmark/mojo.pl
 eg/benchmark/parallel-downloader.pl
 eg/benchmark/wget.pl
 eg/benchmark/www-mech.pl

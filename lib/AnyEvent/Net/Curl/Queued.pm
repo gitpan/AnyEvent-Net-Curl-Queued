@@ -13,7 +13,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.025'; # VERSION
+our $VERSION = '0.026'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -48,8 +48,7 @@ has queue       => (
     default     => sub { [] },
 );
 
-# Moose traits are utterly broken!!!
-
+# Mouse traits are utterly broken!!!
 
 sub queue_push      { push @{shift->queue}, @_ }
 sub queue_unshift   { unshift @{shift->queue}, @_ }
@@ -182,6 +181,7 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -192,7 +192,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.025
+version 0.026
 
 =head1 SYNOPSIS
 
@@ -425,25 +425,21 @@ L<Net::Curl::Multi> instance.
 C<ArrayRef> to the queue.
 Has the following helper methods:
 
-=over 4
+=head2 queue_push
 
-=item *
+Append item at the end of the queue.
 
-queue_push: append item at the end of the queue;
+=head2 queue_unshift
 
-=item *
+Prepend item at the top of the queue.
 
-queue_unshift: prepend item at the top of the queue;
+=head2 dequeue
 
-=item *
+Shift item from the top of the queue.
 
-dequeue: shift item from the top of the queue;
+=head2 count
 
-=item *
-
-count: number of items in queue.
-
-=back
+Number of items in queue.
 
 =head2 share
 
@@ -501,11 +497,6 @@ For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you d
 
 Process queue.
 
-=for Pod::Coverage queue_push
-queue_unshift
-dequeue
-count
-
 =head1 CAVEAT
 
 The I<"Attempt to free unreferenced scalar: SV 0xdeadbeef during global destruction."> message on finalization is mostly harmless.
@@ -548,4 +539,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

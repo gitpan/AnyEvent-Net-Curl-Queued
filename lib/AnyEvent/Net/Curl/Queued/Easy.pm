@@ -23,7 +23,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.025'; # VERSION
+our $VERSION = '0.026'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -48,6 +48,9 @@ has header      => (is => 'rw', isa => 'Ref');
 
 
 has http_response => (is => 'ro', isa => 'Bool', default => 0);
+
+
+has post_content => (is => 'rw', isa => 'Str', default => '');
 
 
 has initial_url => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI', coerce => 1, required => 1);
@@ -212,7 +215,14 @@ sub clone {
     $param->{on_init}   = $self->on_init if ref($self->on_init) eq 'CODE';
     $param->{on_finish} = $self->on_finish if ref($self->on_finish) eq 'CODE';
 
-    return sub { $class->new($param) };
+    my $post_content = $self->post_content;
+    return ($post_content eq '')
+        ? sub { $class->new($param) }
+        : sub {
+            my $new = $class->new($param);
+            $new->setopt(Net::Curl::Easy::CURLOPT_POSTFIELDS, $post_content);
+            return $new;
+        };
 }
 
 
@@ -236,6 +246,8 @@ sub setopt {
         while (my ($key, $val) = each %param) {
             $key = AnyEvent::Net::Curl::Const::opt($key);
             if (defined $key and defined $val and $key == Net::Curl::Easy::CURLOPT_POSTFIELDS and $val ne '') {
+                $self->post_content($val);
+
                 my $tmp;
                 eval { $tmp = encode_utf8($val); decode_json($tmp) };
                 unless ($@) {
@@ -307,6 +319,7 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -317,7 +330,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.025
+version 0.026
 
 =head1 SYNOPSIS
 
@@ -388,6 +401,10 @@ Header buffer.
 =head2 http_response
 
 Optionally encapsulate the response in L<HTTP::Response>.
+
+=head2 post_content
+
+Cache POST content to perform retries.
 
 =head2 initial_url
 
@@ -479,23 +496,6 @@ You are supposed to build your own stuff after/around/before this method using L
 Clones the instance, for re-enqueuing purposes.
 
 You are supposed to build your own stuff after/around/before this method using L<method modifiers|Moose::Manual::MethodModifiers>.
-For example, to implement proper POST re-enqueuing:
-
-    has method => (is => 'ro', isa => 'Str', default => 'GET');
-    has post_content => (is => 'ro', isa => 'Str');
-
-    ...;
-
-    around clone => sub {
-        my $orig = shift;
-        my $self = shift;
-        my $param = shift;
-
-        $param->{method} = $self->method;
-        $param->{post_content} = $self->post_content;
-
-        return $self->$orig($param);
-    };
 
 =head2 setopt(OPTION => VALUE [, OPTION => VALUE])
 
@@ -579,4 +579,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

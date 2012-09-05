@@ -11,7 +11,7 @@ use Any::Moose;
 
 use AnyEvent::Net::Curl::Const;
 
-our $VERSION = '0.025'; # VERSION
+our $VERSION = '0.026'; # VERSION
 
 
 has stamp       => (is => 'rw', isa => 'Int', default => time);
@@ -41,18 +41,18 @@ has stats       => (
 sub sum {
     my ($self, $from) = @_;
 
-    #return 1;
-
     my $is_stats;
     if ($from->isa('AnyEvent::Net::Curl::Queued::Easy')) {
         $is_stats = 0;
-    } elsif (ref($from) eq __PACKAGE__) {
+    } elsif ($from->isa(__PACKAGE__)) {
         $is_stats = 1;
     }
 
     foreach my $type (keys %{$self->stats}) {
-        next if $type eq 'total';
-        $self->stats->{$type} += $is_stats ? $from->stats->{$type} : $from->getinfo(AnyEvent::Net::Curl::Const::info($type));
+        $self->stats->{$type} +=
+            $is_stats
+                ? $from->stats->{$type}
+                : $from->getinfo(AnyEvent::Net::Curl::Const::info($type));
     }
 
     $self->stamp(time);
@@ -67,6 +67,7 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -77,7 +78,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.025
+version 0.026
 
 =head1 SYNOPSIS
 
@@ -118,7 +119,6 @@ C<HashRef[Num]> with statistics:
     size_download
     size_upload
     starttransfer_time
-    total
     total_time
 
 Variable names are from respective L<curl_easy_getinfo()|http://curl.haxx.se/libcurl/c/curl_easy_getinfo.html> accessors.
@@ -156,4 +156,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

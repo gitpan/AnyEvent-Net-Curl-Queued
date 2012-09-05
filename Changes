@@ -1,6 +1,26 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.025 2012-07-27T18:10:57
+0.026 2012-09-05T21:25:46
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - correctly reenqueue POST requests
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - updated t/42-loopback-retry.t to use internal POST retry mechanism
+
+ - attempt double GET at t/30-queued-single.t (to verify queue
+   deduplication)
+
+ - stripped dead code from AE::N::C::Q::Stats
+
+ - fixed AE::N::C::Const cache typo
+
+ - split queue accessors POD
+
+ - Mojo::UserAgent benchmark
+
+
+v0.025 2012-07-27T18:08:19
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - benchmark fixed
 

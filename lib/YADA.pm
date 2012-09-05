@@ -12,7 +12,7 @@ extends 'AnyEvent::Net::Curl::Queued';
 
 use YADA::Worker;
 
-our $VERSION = '0.025'; # VERSION
+our $VERSION = '0.026'; # VERSION
 
 
 no Any::Moose;
@@ -21,6 +21,7 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -31,7 +32,7 @@ YADA - "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 =head1 VERSION
 
-version 0.025
+version 0.026
 
 =head1 SYNOPSIS
 
@@ -98,4 +99,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
