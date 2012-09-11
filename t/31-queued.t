@@ -3,15 +3,17 @@ use strict;
 use utf8;
 use warnings qw(all);
 
+use lib qw(inc);
+
 use Test::More;
 
 use_ok('AnyEvent::Net::Curl::Queued');
 use_ok('AnyEvent::Net::Curl::Queued::Easy');
 use_ok('AnyEvent::Net::Curl::Queued::Stats');
-use_ok('Test::HTTP::Server');
+use_ok('Test::HTTP::AnyEvent::Server');
 
-my $server = Test::HTTP::Server->new;
-isa_ok($server, 'Test::HTTP::Server');
+my $server = Test::HTTP::AnyEvent::Server->new;
+isa_ok($server, 'Test::HTTP::AnyEvent::Server');
 
 my $q = new AnyEvent::Net::Curl::Queued;
 isa_ok($q, qw(AnyEvent::Net::Curl::Queued));
@@ -48,7 +50,12 @@ for my $method (qw(append prepend)) {
         $q->$method(
             sub {
                 AnyEvent::Net::Curl::Queued::Easy->new({
-                    initial_url => $server->uri . 'repeat/' . ($i * 10) . '/' . $method,
+                    initial_url => $server->uri . 'repeat/' . ($i * 1024) . '/' . $method,
+                    on_init     => sub {
+                        shift->setopt(
+                            max_recv_speed_large    => 50 * 1024,   # slow down so the CURLMOPT_TIMERFUNCTION is triggered
+                        );
+                    },
                 })
             }
         );

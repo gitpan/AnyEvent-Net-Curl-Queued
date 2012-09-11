@@ -12,11 +12,15 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "Any::Moose wrapper for queued downloads via Net::Curl & AnyEvent",
   "AUTHOR" => "Stanislaw Pusep <stas\@sysd.org>",
   "BUILD_REQUIRES" => {
+    "AnyEvent::Handle" => 0,
+    "AnyEvent::Util" => 0,
     "File::Find" => 0,
     "File::Temp" => 0,
+    "HTTP::Request" => 0,
     "Test::HTTP::Server" => 0,
     "Test::More" => 0,
-    "Test::Warn" => 0
+    "Test::Warn" => 0,
+    "constant" => 0
   },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -53,7 +57,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.026",
+  "VERSION" => "0.027",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -3,18 +3,22 @@ use strict;
 use utf8;
 use warnings qw(all);
 
-use Test::More;
+use lib qw(inc);
 
-use_ok('AnyEvent::Net::Curl::Queued::Easy');
-use_ok('Test::HTTP::Server');
-use_ok('URI');
+use Test::More;
+diag('setopt()/getinfo() are *forced* to fail so warnings are OK here!');
+
+use AnyEvent::Net::Curl::Queued;
+use AnyEvent::Net::Curl::Queued::Easy;
+use Test::HTTP::Server;
+use URI;
 
 use Net::Curl::Easy qw(:constants);
 
 my $server = Test::HTTP::Server->new;
-isa_ok($server, 'Test::HTTP::Server');
 
 my $url = URI->new($server->uri . 'echo/head');
+
 my $easy = new AnyEvent::Net::Curl::Queued::Easy({ initial_url => $url });
 isa_ok($easy, qw(AnyEvent::Net::Curl::Queued::Easy));
 can_ok($easy, qw(
@@ -41,7 +45,11 @@ $easy->setopt({
     PostFields          => 'test1=12345&test2=QWERTY',
 });
 
-ok(($easy->perform // 0) == Net::Curl::Easy::CURLE_OK, 'perform()');
+# make Devel::Cover happy
+$easy->setopt();
+$easy->setopt($easy);
+
+ok($easy->perform == Net::Curl::Easy::CURLE_OK, 'perform()');
 
 my $buf = ${$easy->data};
 like($buf, qr{^POST\b}, 'POST');
@@ -57,6 +65,7 @@ my @names = qw(
     primary_ip
     response_code
     size_download
+    INVALID.NAME
 );
 
 my $info = {
@@ -76,8 +85,18 @@ my @info = $easy->getinfo(\@names);
 
 my $i = 0;
 for (@names) {
-    ok($info->{$_} eq $info2->{$_}, "field '$_' match for getinfo(HASH)");
-    ok($info->{$_} eq $info[$i++], "field '$_' match for getinfo(ARRAY)");
+    if (m{^\w+$}) {
+        ok($info->{$_} eq $info2->{$_}, "field '$_' match for getinfo(HASH)");
+        ok($info->{$_} eq $info[$i], "field '$_' match for getinfo(ARRAY)");
+    } else {
+        is($info->{$_}, 0, 'getinfo(HASHREF) with INVALID.NAME');
+        is($info2->{$_}, undef, 'getinfo(HASH) with INVALID.NAME');
+        is($info[$i], undef, 'getinfo(ARRAY) with INVALID.NAME');
+    }
+    ++$i;
 }
 
-done_testing(27);
+is($easy->getinfo($easy), undef, 'getinfo(bad object)');
+is($easy->getinfo('INVALID.NAME'), undef, 'getinfo("INVALID.NAME")');
+
+done_testing(28);

@@ -1,6 +1,58 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.026 2012-09-05T21:25:46
+0.027 2012-09-11T11:07:01
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - test cloning
+
+ - AE::N::C::Q::Easy->clone($param) fixed
+
+ - fix: no socket_action(CURL_SOCKET_TIMEOUT) if no handles are open
+
+ - reimplemented eg/benchmark/mojo.pl to work the non-blocking way
+
+ - documentation update
+
+ - implemented AnyEvent::HTTP::Tiny client to test
+   Test::HTTP::AnyEvent::Server
+
+ - use Any::Moose for Test::HTTP::AnyEvent::Server
+
+ - gave up, Test::HTTP::Server is more reliable for blocking tests
+
+ - enhance Test::HTTP::AnyEvent::Server coverage
+
+ - more failing tests
+
+ - more AE::N::C::Easy cleanup
+
+ - removed Test::HTTP::Server dependency (now for sure)
+
+ - test incorrect usage of AE::N::C::Q::Easy setopt()/getinfo()
+
+ - migrate N::C::Multi & N::C::Easy object capability checks into test
+
+ - test boundaries fine-tuned
+
+ - removed unmet conditions
+
+ - test watchdog & timeout
+
+ - clean up duplicate URL condition
+
+ - removed Test::HTTP::Server dependency
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - benchmark updated
+
+ - eg/queue: filtered URLs which lead to redirectors
+
+ - implemented Test::HTTP::AnyEvent::Server, as fork() breaks Net::Curl :(
+
+ - use AE::postpone instead of "instant timer" hack
+
+
+v0.026 2012-09-05T21:24:33
  [Stanislaw Pusep <creaktive@gmail.com>]
  - correctly reenqueue POST requests
 

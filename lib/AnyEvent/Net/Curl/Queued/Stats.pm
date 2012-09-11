@@ -2,6 +2,7 @@ package AnyEvent::Net::Curl::Queued::Stats;
 # ABSTRACT: Connection statistics for AnyEvent::Net::Curl::Queued::Easy
 
 
+use feature qw(switch);
 use strict;
 use utf8;
 use warnings qw(all);
@@ -11,7 +12,7 @@ use Any::Moose;
 
 use AnyEvent::Net::Curl::Const;
 
-our $VERSION = '0.026'; # VERSION
+our $VERSION = '0.027'; # VERSION
 
 
 has stamp       => (is => 'rw', isa => 'Int', default => time);
@@ -42,13 +43,15 @@ sub sum {
     my ($self, $from) = @_;
 
     my $is_stats;
-    if ($from->isa('AnyEvent::Net::Curl::Queued::Easy')) {
-        $is_stats = 0;
-    } elsif ($from->isa(__PACKAGE__)) {
-        $is_stats = 1;
+    for (ref $from) {
+        when ('AnyEvent::Net::Curl::Queued::Easy') {
+            $is_stats = 0;
+        } when (__PACKAGE__) {
+            $is_stats = 1;
+        }
     }
 
-    foreach my $type (keys %{$self->stats}) {
+    for my $type (keys %{$self->stats}) {
         $self->stats->{$type} +=
             $is_stats
                 ? $from->stats->{$type}
@@ -78,7 +81,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.026
+version 0.027
 
 =head1 SYNOPSIS
 

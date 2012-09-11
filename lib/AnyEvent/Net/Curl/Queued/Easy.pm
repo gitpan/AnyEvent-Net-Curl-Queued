@@ -23,7 +23,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.026'; # VERSION
+our $VERSION = '0.027'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -118,13 +118,15 @@ sub init {
         Net::Curl::Easy::CURLOPT_URL,           $url->as_string,
         Net::Curl::Easy::CURLOPT_WRITEDATA,     \$data,
         Net::Curl::Easy::CURLOPT_WRITEHEADER,   \$header,
+    );
 
-        # common parameters
-        ($self->queue ? (
+    # common parameters
+    if (ref($self->queue) eq 'AnyEvent::Net::Curl::Queued') {
+        $self->setopt(
             Net::Curl::Easy::CURLOPT_SHARE,     $self->queue->share,
             Net::Curl::Easy::CURLOPT_TIMEOUT,   $self->queue->timeout,
-        ) : ()),
-    );
+        );
+    }
 
     # salt
     $self->sign($self->meta->name);
@@ -137,10 +139,8 @@ sub init {
 
 
 sub has_error {
-    my ($self) = @_;
-
     # very bad error
-    return ($self->curl_result == Net::Curl::Easy::CURLE_OK) ? 0 : 1;
+    0 + $_[0]->curl_result != Net::Curl::Easy::CURLE_OK;
 }
 
 
@@ -155,16 +155,14 @@ sub _finish {
     if ($self->http_response) {
         $self->res(
             HTTP::Response->parse(
-                (${$self->header} // "\n")
-                . (${$self->data} // '')
+                ${$self->header}
+                . ${$self->data}
             )
         );
 
-        if (my $msg = $self->res->message) {
-            $msg =~ s/^\s+//s;
-            $msg =~ s/\s+$//s;
-            $self->res->message($msg);
-        }
+        my $msg = $self->res->message;
+        $msg =~ s/^\s+|\s+$//s;
+        $self->res->message($msg);
     }
 
     # wrap around the extendible interface
@@ -199,7 +197,8 @@ sub finish {
 sub clone {
     my ($self, $param) = @_;
 
-    $param //= {};
+    # silently ignore unsupported parameters
+    $param = {} unless 'HASH' eq ref $param;
 
     my $class = $self->meta->name;
     $param->{$_} = $self->$_()
@@ -245,7 +244,7 @@ sub setopt {
 
         while (my ($key, $val) = each %param) {
             $key = AnyEvent::Net::Curl::Const::opt($key);
-            if (defined $key and defined $val and $key == Net::Curl::Easy::CURLOPT_POSTFIELDS and $val ne '') {
+            if ($key == Net::Curl::Easy::CURLOPT_POSTFIELDS) {
                 $self->post_content($val);
 
                 my $tmp;
@@ -258,8 +257,7 @@ sub setopt {
                     $val = $tmp;
                 }
             }
-            #$self->$orig($key, $val) if defined $key;
-            $self->SUPER::setopt($key, $val) if defined $key;
+            $self->SUPER::setopt($key, $val);
         }
     } else {
         carp "Specify at least one OPTION/VALUE pair!";
@@ -330,7 +328,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.026
+version 0.027
 
 =head1 SYNOPSIS
 
