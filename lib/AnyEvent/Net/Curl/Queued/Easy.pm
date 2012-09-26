@@ -23,7 +23,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.027'; # VERSION
+our $VERSION = '0.028'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -57,6 +57,9 @@ has initial_url => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI',
 
 
 has final_url   => (is => 'rw', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI', coerce => 1);
+
+
+has opts        => (is => 'ro', isa => 'HashRef', default => sub { {} });
 
 
 has queue       => (is => 'rw', isa => 'Ref', weak_ref => 1);
@@ -106,9 +109,9 @@ sub init {
     my ($self) = @_;
 
     # buffers
-    my $data;
+    my $data = '';
     $self->data(\$data);
-    my $header;
+    my $header = '';
     $self->header(\$header);
 
     # fragment mangling
@@ -132,6 +135,9 @@ sub init {
     $self->sign($self->meta->name);
     # URL; GET parameters included
     $self->sign($url->as_string);
+
+    # set default options
+    $self->setopt($self->opts);
 
     # call the optional callback
     $self->on_init->(@_) if ref($self->on_init) eq 'CODE';
@@ -328,7 +334,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.027
+version 0.028
 
 =head1 SYNOPSIS
 
@@ -411,6 +417,10 @@ URL to fetch (string).
 =head2 final_url
 
 Final URL (after redirections).
+
+=head2 opts
+
+C<HashRef> to be passed to C<setopt()> during initialization (inside C<init()>, before C<on_init()> callback).
 
 =head2 queue
 

@@ -1,6 +1,29 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.027 2012-09-11T11:07:01
+0.028 2012-09-26T19:59:05
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - minor compatibility fixes
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - attempt to fix FreeBSD test errors
+
+ - YADA append()/prepend() are now chainable (updated example in SYNOPSIS)
+
+ - experimental YADA DWIM extensions for append()/prepend()
+
+ - added AE::N::C::Q::Easy->opts attribute to quickly setopt() stuff
+
+ - more verbose environment info
+
+ - benchmark results updated
+
+ - update process name in eg/benchmark.pl
+
+ - refactored eg/benchmark.pl
+
+
+v0.027 2012-09-11T04:54:09
  [Stanislaw Pusep <creaktive@gmail.com>]
  - test cloning
 
