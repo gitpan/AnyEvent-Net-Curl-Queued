@@ -16,6 +16,7 @@ my %WriteMakefileArgs = (
     "AnyEvent::Util" => 0,
     "File::Find" => 0,
     "File::Temp" => 0,
+    "FindBin" => 0,
     "HTTP::Request" => 0,
     "Test::HTTP::Server" => 0,
     "Test::More" => 0,
@@ -57,7 +58,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.028",
+  "VERSION" => "0.029",
   "test" => {
     "TESTS" => "t/*.t"
   }

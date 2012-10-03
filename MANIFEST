@@ -54,6 +54,7 @@ t/50-recursion.t
 t/60-cleanup.t
 t/70-timeout.t
 t/71-bad-address.t
+t/72-non-http.t
 t/99-test-http-anyevent-server.t
 t/author-critic.t
 t/author-test-eol.t

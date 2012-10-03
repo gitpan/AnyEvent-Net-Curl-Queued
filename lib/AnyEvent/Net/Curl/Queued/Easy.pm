@@ -23,7 +23,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.028'; # VERSION
+our $VERSION = '0.029'; # VERSION
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -158,7 +158,7 @@ sub _finish {
     $self->final_url($self->getinfo(Net::Curl::Easy::CURLINFO_EFFECTIVE_URL));
 
     # optionally encapsulate with HTTP::Response
-    if ($self->http_response) {
+    if ($self->http_response and $self->final_url->scheme =~ m{^https?$}i) {
         $self->res(
             HTTP::Response->parse(
                 ${$self->header}
@@ -167,7 +167,7 @@ sub _finish {
         );
 
         my $msg = $self->res->message;
-        $msg =~ s/^\s+|\s+$//s;
+        $msg =~ s/^\s+|\s+$//gs;
         $self->res->message($msg);
     }
 
@@ -334,7 +334,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.028
+version 0.029
 
 =head1 SYNOPSIS
 
@@ -404,7 +404,7 @@ Header buffer.
 
 =head2 http_response
 
-Optionally encapsulate the response in L<HTTP::Response>.
+Optionally encapsulate the response in L<HTTP::Response> (when the scheme is HTTP/HTTPS).
 
 =head2 post_content
 

@@ -12,7 +12,7 @@ use Any::Moose;
 
 use AnyEvent::Net::Curl::Const;
 
-our $VERSION = '0.028'; # VERSION
+our $VERSION = '0.029'; # VERSION
 
 
 has stamp       => (is => 'rw', isa => 'Int', default => time);
@@ -81,7 +81,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.028
+version 0.029
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,17 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.028 2012-09-26T19:59:05
+0.029 2012-10-03T21:24:21
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - test fixes (no need to rely on cpan.org)
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - eg/simple.pl updated to show the new sugar syntax
+
+ - do *NOT* return HTTP::Response if scheme is not HTTP/HTTPS
+
+
+v0.028 2012-09-26T19:52:31
  [Stanislaw Pusep <creaktive@gmail.com>]
  - minor compatibility fixes
 
