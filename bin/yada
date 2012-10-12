@@ -12,8 +12,7 @@ use Getopt::Long;
 use Pod::Usage;
 use YADA;
 
-my $VERSION; # stub
-our $VERSION = '0.029'; # VERSION
+our $VERSION = '0.030'; # VERSION
 
 
 GetOptions(
@@ -130,7 +129,7 @@ yada - Yet Another Download Accelerator CLI wrapper
 
 =head1 VERSION
 
-version 0.029
+version 0.030
 
 =head1 SYNOPSIS
 

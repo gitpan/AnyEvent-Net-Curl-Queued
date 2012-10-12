@@ -3,7 +3,7 @@ NAME
     via Net::Curl & AnyEvent
 
 VERSION
-    version 0.029
+    version 0.030
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -195,6 +195,11 @@ ATTRIBUTES
     only once. To seed POST parameters, you must extend the
     AnyEvent::Net::Curl::Queued::Easy class. Setting "allow_dups" to true
     value disables request checks.
+
+  common_opts
+    "opts" in AnyEvent::Net::Curl::Queued::Easy attribute common to all
+    workers initialized under the same queue. You may define "User-Agent"
+    string here.
 
   completed
     Count completed requests.

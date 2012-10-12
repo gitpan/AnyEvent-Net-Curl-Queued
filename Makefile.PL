@@ -18,6 +18,7 @@ my %WriteMakefileArgs = (
     "File::Temp" => 0,
     "FindBin" => 0,
     "HTTP::Request" => 0,
+    "Net::Curl" => 0,
     "Test::HTTP::Server" => 0,
     "Test::More" => 0,
     "Test::Warn" => 0,
@@ -51,6 +52,7 @@ my %WriteMakefileArgs = (
     "Net::Curl::Share" => 0,
     "Pod::Usage" => 0,
     "Scalar::Util" => 0,
+    "Time::HiRes" => 0,
     "URI" => 0,
     "autodie" => 0,
     "feature" => 0,
@@ -58,7 +60,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.029",
+  "VERSION" => "0.030",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -23,7 +23,15 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.029'; # VERSION
+our $VERSION = '0.030'; # VERSION
+
+subtype 'QueueType'
+    => as 'Object'
+    => where {
+        $_->isa('AnyEvent::Net::Curl::Queued')
+            or
+        $_->isa('YADA')
+    };
 
 subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
     => as class_type('URI');
@@ -35,43 +43,44 @@ coerce 'AnyEvent::Net::Curl::Queued::Easy::URI'
         => via { $_ };
 
 
-has curl_result => (is => 'rw', isa => 'Net::Curl::Easy::Code');
+has curl_result => (is => 'ro', isa => 'Net::Curl::Easy::Code', writer => 'set_curl_result');
 
 
-has data        => (is => 'rw', isa => 'Ref');
+has data        => (is => 'ro', isa => 'ScalarRef', writer => 'set_data');
 
 
 has force       => (is => 'ro', isa => 'Bool', default => 0);
 
 
+# will be real-only in future releases!
 has header      => (is => 'rw', isa => 'Ref');
 
 
 has http_response => (is => 'ro', isa => 'Bool', default => 0);
 
 
-has post_content => (is => 'rw', isa => 'Str', default => '');
+has post_content => (is => 'ro', isa => 'Str', default => '', writer => 'set_post_content');
 
 
 has initial_url => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI', coerce => 1, required => 1);
 
 
-has final_url   => (is => 'rw', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI', coerce => 1);
+has final_url   => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI', coerce => 1, writer => 'set_final_url');
 
 
 has opts        => (is => 'ro', isa => 'HashRef', default => sub { {} });
 
 
-has queue       => (is => 'rw', isa => 'Ref', weak_ref => 1);
+has queue       => (is => 'rw', isa => 'QueueType');
 
 
 has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Digest::SHA(256) }, lazy => 1);
 
 
-has res         => (is => 'rw', isa => 'HTTP::Response');
+has res         => (is => 'ro', isa => 'HTTP::Response', writer => 'set_res');
 
 
-has retry       => (is => 'rw', isa => 'Int', default => 10);
+has retry       => (is => 'ro', isa => 'Int', default => 10);
 
 
 has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
@@ -110,7 +119,7 @@ sub init {
 
     # buffers
     my $data = '';
-    $self->data(\$data);
+    $self->set_data(\$data);
     my $header = '';
     $self->header(\$header);
 
@@ -124,11 +133,12 @@ sub init {
     );
 
     # common parameters
-    if (ref($self->queue) eq 'AnyEvent::Net::Curl::Queued') {
+    if (defined($self->queue)) {
         $self->setopt(
             Net::Curl::Easy::CURLOPT_SHARE,     $self->queue->share,
             Net::Curl::Easy::CURLOPT_TIMEOUT,   $self->queue->timeout,
         );
+        $self->setopt($self->queue->common_opts);
     }
 
     # salt
@@ -154,19 +164,19 @@ sub _finish {
     my ($self, $result) = @_;
 
     # populate results
-    $self->curl_result($result);
-    $self->final_url($self->getinfo(Net::Curl::Easy::CURLINFO_EFFECTIVE_URL));
+    $self->set_curl_result($result);
+    $self->set_final_url($self->getinfo(Net::Curl::Easy::CURLINFO_EFFECTIVE_URL));
 
     # optionally encapsulate with HTTP::Response
     if ($self->http_response and $self->final_url->scheme =~ m{^https?$}i) {
-        $self->res(
+        $self->set_res(
             HTTP::Response->parse(
                 ${$self->header}
                 . ${$self->data}
             )
         );
 
-        my $msg = $self->res->message;
+        my $msg = $self->res->message // '';
         $msg =~ s/^\s+|\s+$//gs;
         $self->res->message($msg);
     }
@@ -251,7 +261,7 @@ sub setopt {
         while (my ($key, $val) = each %param) {
             $key = AnyEvent::Net::Curl::Const::opt($key);
             if ($key == Net::Curl::Easy::CURLOPT_POSTFIELDS) {
-                $self->post_content($val);
+                $self->set_post_content($val);
 
                 my $tmp;
                 eval { $tmp = encode_utf8($val); decode_json($tmp) };
@@ -334,7 +344,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.029
+version 0.030
 
 =head1 SYNOPSIS
 

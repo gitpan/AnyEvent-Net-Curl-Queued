@@ -1,6 +1,22 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.029 2012-10-03T21:24:21
+0.030 2012-10-12T13:09:02
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - YADA DWIM: documented & tested
+
+ - updated test for nasty empty HTTP::Message condition
+
+ - minor edge case condition adjustments
+
+ - better Moose encapsulation
+
+ - better type constraints
+
+ - added common_opts to AE::N::C::Q and fixed CURLOPT_(SHARE|TIMEOUT)
+   propagation for YADA
+
+
+v0.029 2012-10-03T19:44:25
  [Stanislaw Pusep <creaktive@gmail.com>]
  - test fixes (no need to rely on cpan.org)
 

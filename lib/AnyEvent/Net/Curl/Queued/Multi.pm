@@ -15,13 +15,13 @@ use Net::Curl::Multi;
 extends 'Net::Curl::Multi';
 
 
-has active      => (is => 'rw', isa => 'Int', default => -1);
+has active      => (is => 'ro', isa => 'Int', default => -1, writer => 'set_active');
 
 
 has pool        => (is => 'ro', isa => 'HashRef[Ref]', default => sub { {} });
 
 
-has timer       => (is => 'rw', isa => 'Any');
+has timer       => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer');
 
 
 has max         => (is => 'ro', isa => 'Num', default => 4);
@@ -29,7 +29,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.029'; # VERSION
+our $VERSION = '0.030'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -92,11 +92,11 @@ sub _cb_timer {
     my ($self, $timeout_ms) = @_;
 
     # deregister old timer
-    $self->timer(undef);
+    $self->clear_timer;
 
     my $cb = sub {
         $self->socket_action(Net::Curl::Multi::CURL_SOCKET_TIMEOUT)
-            if $self->handles > 0;
+            #if $self->handles > 0;
     };
 
     if ($timeout_ms < 0) {
@@ -110,10 +110,10 @@ sub _cb_timer {
         # must not wait too long (more than a few seconds perhaps)
         # before you call curl_multi_perform() again.
 
-        $self->timer(AE::timer 1, 1, $cb);
+        $self->set_timer(AE::timer 1, 1, $cb);
     } else {
         # This will trigger timeouts if there are any.
-        $self->timer(AE::timer $timeout_ms / 1000, 0, $cb);
+        $self->set_timer(AE::timer $timeout_ms / 1000, 0, $cb);
     }
 
     return 1;
@@ -127,7 +127,7 @@ sub socket_action {
     my $self = shift;
 
     #$self->active($self->$orig(@_));
-    $self->active($self->SUPER::socket_action(@_));
+    $self->set_active($self->SUPER::socket_action(@_));
 
     my $i = 0;
     while (my (undef, $easy, $result) = $self->info_read) {
@@ -137,7 +137,7 @@ sub socket_action {
         ++$i;
     }
 
-    $self->active($self->active - $i);
+    $self->set_active($self->active - $i);
 };
 
 
@@ -188,7 +188,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.029
+version 0.030
 
 =head1 SYNOPSIS
 

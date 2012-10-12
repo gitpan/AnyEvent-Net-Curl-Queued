@@ -13,10 +13,13 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.029'; # VERSION
+our $VERSION = '0.030'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
+
+
+has common_opts => (is => 'ro', isa => 'HashRef', default => sub { {} });
 
 
 has completed  => (
@@ -30,7 +33,7 @@ has completed  => (
 );
 
 
-has cv          => (is => 'rw', isa => 'Ref | Undef', default => sub { AE::cv }, lazy => 1);
+has cv          => (is => 'ro', isa => 'Maybe[Ref]', default => sub { AE::cv }, lazy => 1, writer => 'set_cv');
 
 
 subtype 'MaxConn'
@@ -39,7 +42,7 @@ subtype 'MaxConn'
 has max         => (is => 'rw', isa => 'MaxConn', default => 4);
 
 
-has multi       => (is => 'rw', isa => 'AnyEvent::Net::Curl::Queued::Multi');
+has multi       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Multi', writer => 'set_multi');
 
 
 has queue       => (
@@ -65,15 +68,15 @@ has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', def
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
 
-has unique      => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} });
+has unique      => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
 
 
-has watchdog    => (is => 'rw', isa => 'Ref | Undef');
+has watchdog    => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog');
 
 sub BUILD {
     my ($self) = @_;
 
-    $self->multi(
+    $self->set_multi(
         AnyEvent::Net::Curl::Queued::Multi->new({
             max         => $self->max,
             timeout     => $self->timeout,
@@ -90,7 +93,7 @@ sub start {
     my ($self) = @_;
 
     # watchdog
-    $self->watchdog(AE::timer 1, 1, sub {
+    $self->set_watchdog(AE::timer 1, 1, sub {
         $self->multi->perform;
         $self->empty;
     });
@@ -164,11 +167,11 @@ sub wait {
     $self->cv->recv;
 
     # stop the watchdog
-    $self->watchdog(undef);
+    $self->clear_watchdog;
 
     # reload
-    $self->cv(AE::cv);
-    $self->multi(
+    $self->set_cv(AE::cv);
+    $self->set_multi(
         AnyEvent::Net::Curl::Queued::Multi->new({
             max         => $self->max,
             timeout     => $self->timeout,
@@ -194,7 +197,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.029
+version 0.030
 
 =head1 SYNOPSIS
 
@@ -417,6 +420,11 @@ Allow duplicate requests (default: false).
 By default, requests to the same URL (more precisely, requests with the same L<signature|AnyEvent::Net::Curl::Queued::Easy/sha> are issued only once.
 To seed POST parameters, you must extend the L<AnyEvent::Net::Curl::Queued::Easy> class.
 Setting C<allow_dups> to true value disables request checks.
+
+=head2 common_opts
+
+L<AnyEvent::Net::Curl::Queued::Easy/opts> attribute common to all workers initialized under the same queue.
+You may define C<User-Agent> string here.
 
 =head2 completed
 
