@@ -1,6 +1,13 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.031 2012-10-16T14:24:47
+0.032 2012-10-16T15:14:31
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - version bump
+
+ - fix release: dependencies were stripped accidentally
+
+
+v0.031 2012-10-16T14:20:54
  [Stanislaw Pusep <creaktive@gmail.com>]
  - split Test::HTTP::AnyEvent::Server into a separate module
 
