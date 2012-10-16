@@ -3,7 +3,7 @@ NAME
     via Net::Curl & AnyEvent
 
 VERSION
-    version 0.030
+    version 0.031
 
 SYNOPSIS
         #!/usr/bin/env perl

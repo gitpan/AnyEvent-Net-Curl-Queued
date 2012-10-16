@@ -27,7 +27,6 @@ eg/crawl-apache.pl
 eg/fetch-urls.pl
 eg/queue
 eg/simple.pl
-inc/Test/HTTP/AnyEvent/Server.pm
 lib/AnyEvent/Net/Curl/Const.pm
 lib/AnyEvent/Net/Curl/Queued.pm
 lib/AnyEvent/Net/Curl/Queued/Easy.pm
@@ -55,7 +54,6 @@ t/60-cleanup.t
 t/70-timeout.t
 t/71-bad-address.t
 t/72-non-http.t
-t/99-test-http-anyevent-server.t
 t/author-critic.t
 t/author-test-eol.t
 t/release-cpan-changes.t

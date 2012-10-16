@@ -1,6 +1,14 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.030 2012-10-12T13:09:02
+0.031 2012-10-16T14:24:47
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - split Test::HTTP::AnyEvent::Server into a separate module
+
+ - finally Test::HTTP::AnyEvent::Server can detach & run as separate
+   process
+
+
+v0.030 2012-10-11T22:31:11
  [Stanislaw Pusep <creaktive@gmail.com>]
  - YADA DWIM: documented & tested
 
@@ -396,103 +404,5 @@ v0.005 2011-10-19T19:49:29
  - single request in queue test
 
  - fixed HTTP::Response encapsulation warning when response is empty
-
-
-v0.004 2011-10-15T16:40:51
- [Stanislaw Pusep <creaktive@gmail.com>]
- - stupid termination condition bug
-
- - Changes
-
-
-v0.003 2011-10-15T15:31:32
- [Stanislaw Pusep <creaktive@gmail.com>]
- - no CURLINFO_PRIMARY_PORT in older libcurl
-
-
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - Changes
-
-
-v0.002 2011-10-14T14:34:05
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - now passes tests on perl-5.10.1
-
- - getinfo()/setopt() improvements
-
- - Changes
-
-
-v0.001 2011-10-13T20:44:06
- [Stanislaw Pusep <creaktive@gmail.com>]
-
-
-
-
-
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - documentation
-
- - cleanup
-
- - HTTP::Response encapsulation
-
- - Easy getinfo() wrapper
-
- - cleanup
-
- - Easy setopt() wrapper
-
- - coerce URLs
-
- - POD
-
- - end condition fix (used to cause segfault)
-
- - remove cv->begin/cv->end crap
-
- - weak_ref hell!!!
-
- - Queued test
-
- - Easy test & POD
-
- - POD[2]
-
- - POD
-
- - Stats test
-
- - Net::Curl compatibility test
-
- - minor updates
-
- - AnyEvent::Net::Curl::Queued::Multi max attribute
-
- - leak fix
-
- - Dist::Zilla[4]
-
- - Dist::Zilla[3]
-
- - Dist::Zilla[2]
-
- - Dist::Zilla
-
- - Dist::Zilla
-
- - cleanup
-
- - CodeRef hack
-
- - output
-
- - cleanup
-
- - stats
-
- - retries
-
- - split
 
 

@@ -4,20 +4,16 @@ use strict;
 use utf8;
 use warnings qw(all);
 
-use lib qw(inc);
-
 use Test::More;
 
-use Test::HTTP::Server;
+use Test::HTTP::AnyEvent::Server;
 use AnyEvent::Net::Curl::Queued::Easy;
 use AnyEvent::Net::Curl::Queued::Multi;
 
 use Net::Curl::Easy qw(:constants);
 use Net::Curl::Multi qw(:constants);
 
-my $server = Test::HTTP::Server->new;
-# disable proxy!
-@ENV{qw(http_proxy ftp_proxy all_proxy)} = ('' x 3);
+my $server = Test::HTTP::AnyEvent::Server->new({ forked => 1 });
 
 my $url = $server->uri . 'echo/head';
 
