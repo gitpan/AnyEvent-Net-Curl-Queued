@@ -13,7 +13,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.032'; # VERSION
+our $VERSION = '0.033'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -59,7 +59,22 @@ sub dequeue         { shift @{shift->queue} }
 sub count           { scalar @{shift->queue} }
 
 
-has share       => (is => 'ro', isa => 'Net::Curl::Share', default => sub { Net::Curl::Share->new }, lazy => 1);
+our %share; # PLEASE, MAKE IT STOP!!! IT HURTS MY BRAIN!!!
+has share       => (
+    is      => 'ro',
+    isa     => 'Net::Curl::Share',
+    default => sub {
+        my $share = Net::Curl::Share->new;
+        $share{$share} = $share;
+    },
+    lazy    => 1,
+    weak_ref=> 1,
+);
+
+#sub DEMOLISH {
+#    # Y U NO DEFINED HERE?!?!
+#    delete $share{$_[0]->share};
+#}
 
 
 has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
@@ -71,7 +86,7 @@ has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 has unique      => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
 
 
-has watchdog    => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog');
+has watchdog    => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog', weak_ref => 1);
 
 sub BUILD {
     my ($self) = @_;
@@ -197,7 +212,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.032
+version 0.033
 
 =head1 SYNOPSIS
 
@@ -524,10 +539,6 @@ Process queue.
 =head1 CAVEAT
 
 =over 4
-
-=item *
-
-If you mix in C<fork()> calls you may get the I<"Attempt to free unreferenced scalar: SV 0xdeadbeef during global destruction."> message on finalization.
 
 =item *
 

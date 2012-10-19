@@ -3,7 +3,7 @@ NAME
     via Net::Curl & AnyEvent
 
 VERSION
-    version 0.032
+    version 0.033
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -279,10 +279,6 @@ METHODS
     Process queue.
 
 CAVEAT
-    *   If you mix in "fork()" calls you may get the *"Attempt to free
-        unreferenced scalar: SV 0xdeadbeef during global destruction."*
-        message on finalization.
-
     *   Many sources suggest to compile libcurl <http://curl.haxx.se/> with
         c-ares <http://c-ares.haxx.se/> support. This only improves
         performance if you are supposed to do many DNS resolutions (e.g.

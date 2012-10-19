@@ -51,6 +51,7 @@ t/43-loopback-yada.t
 t/44-yada-simple.t
 t/50-recursion.t
 t/60-cleanup.t
+t/61-nest.t
 t/70-timeout.t
 t/71-bad-address.t
 t/72-non-http.t

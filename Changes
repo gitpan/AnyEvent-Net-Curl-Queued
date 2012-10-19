@@ -1,6 +1,18 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.032 2012-10-16T15:14:31
+0.033 2012-10-19T11:34:56
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - better compliance with libcurl docs
+
+ - a bit cleaner Net::Curl::Share handling
+
+ - very bad fix for Net::Curl::Share instance "weakness"
+
+ - getting rid of "Attempt to free unreferenced scalar: SV 0xdeadbeef
+   during global destruction."
+
+
+v0.032 2012-10-16T15:14:13
  [Stanislaw Pusep <creaktive@gmail.com>]
  - version bump
 
@@ -396,20 +408,5 @@ v0.006 2011-10-20T14:02:20
  - Stats: precompute constants
 
  - benchmark example
-
-
-v0.005 2011-10-19T19:49:29
- [Stanislaw Pusep <creaktive@gmail.com>]
- - Changes
-
-
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - new release
-
- - recursively update queue test
-
- - single request in queue test
-
- - fixed HTTP::Response encapsulation warning when response is empty
 
 

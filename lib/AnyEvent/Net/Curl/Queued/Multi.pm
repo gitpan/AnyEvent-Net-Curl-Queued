@@ -21,7 +21,7 @@ has active      => (is => 'ro', isa => 'Int', default => -1, writer => 'set_acti
 has pool        => (is => 'ro', isa => 'HashRef[Ref]', default => sub { {} });
 
 
-has timer       => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer');
+has timer       => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer', weak_ref => 1);
 
 
 has max         => (is => 'ro', isa => 'Num', default => 4);
@@ -29,7 +29,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.032'; # VERSION
+our $VERSION = '0.033'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -82,7 +82,7 @@ sub _cb_socket {
         delete $self->pool->{"w$socket"};
     }
 
-    return 1;
+    return 0;
 }
 
 # timer callback: It triggers timeout update. Timeout value tells
@@ -116,7 +116,7 @@ sub _cb_timer {
         $self->set_timer(AE::timer $timeout_ms / 1000, 0, $cb);
     }
 
-    return 1;
+    return 0;
 }
 
 
@@ -137,7 +137,7 @@ sub socket_action {
         ++$i;
     }
 
-    $self->set_active($self->active - $i);
+    return $self->set_active($self->active - $i);
 };
 
 
@@ -188,7 +188,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.032
+version 0.033
 
 =head1 SYNOPSIS
 
