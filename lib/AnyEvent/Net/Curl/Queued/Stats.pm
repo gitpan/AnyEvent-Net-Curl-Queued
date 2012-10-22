@@ -7,16 +7,16 @@ use strict;
 use utf8;
 use warnings qw(all);
 
+use AnyEvent;
 use Carp qw(confess);
 use Any::Moose;
 
 use AnyEvent::Net::Curl::Const;
-use Time::HiRes qw(time);
 
-our $VERSION = '0.033'; # VERSION
+our $VERSION = '0.034'; # VERSION
 
 
-has stamp       => (is => 'ro', isa => 'Num', default => time, writer => 'set_stamp');
+has stamp       => (is => 'ro', isa => 'Num', default => sub { AE::time }, writer => 'set_stamp');
 
 
 has stats       => (
@@ -59,7 +59,7 @@ sub sum {
                 : $from->getinfo(AnyEvent::Net::Curl::Const::info($type));
     }
 
-    $self->set_stamp(time);
+    $self->set_stamp(AE::time);
 
     return 1;
 }
@@ -82,7 +82,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.033
+version 0.034
 
 =head1 SYNOPSIS
 

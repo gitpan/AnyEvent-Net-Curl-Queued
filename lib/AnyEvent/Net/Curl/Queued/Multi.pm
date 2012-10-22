@@ -21,7 +21,7 @@ has active      => (is => 'ro', isa => 'Int', default => -1, writer => 'set_acti
 has pool        => (is => 'ro', isa => 'HashRef[Ref]', default => sub { {} });
 
 
-has timer       => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer', weak_ref => 1);
+has timer       => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer');
 
 
 has max         => (is => 'ro', isa => 'Num', default => 4);
@@ -29,7 +29,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.033'; # VERSION
+our $VERSION = '0.034'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
@@ -188,7 +188,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.033
+version 0.034
 
 =head1 SYNOPSIS
 

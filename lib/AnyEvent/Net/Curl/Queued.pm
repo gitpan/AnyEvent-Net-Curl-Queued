@@ -13,7 +13,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.033'; # VERSION
+our $VERSION = '0.034'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -68,13 +68,11 @@ has share       => (
         $share{$share} = $share;
     },
     lazy    => 1,
-    weak_ref=> 1,
 );
 
-#sub DEMOLISH {
-#    # Y U NO DEFINED HERE?!?!
-#    delete $share{$_[0]->share};
-#}
+sub DEMOLISH {
+    delete $share{$_[0]->share};
+}
 
 
 has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
@@ -86,7 +84,7 @@ has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 has unique      => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
 
 
-has watchdog    => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog', weak_ref => 1);
+has watchdog    => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog');
 
 sub BUILD {
     my ($self) = @_;
@@ -212,7 +210,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.033
+version 0.034
 
 =head1 SYNOPSIS
 
