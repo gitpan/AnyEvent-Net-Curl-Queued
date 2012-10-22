@@ -13,7 +13,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.034'; # VERSION
+our $VERSION = '0.035'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -68,10 +68,15 @@ has share       => (
         $share{$share} = $share;
     },
     lazy    => 1,
+    weak_ref=> 1,
 );
 
+# WHYYYYYYY?????? WHYYYYYYYYYYY????????
 sub DEMOLISH {
-    delete $share{$_[0]->share};
+    my ($self) = @_;
+    my $share = $self->share // '';
+    delete $share{$share}
+        if exists $share{$share};
 }
 
 
@@ -210,7 +215,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.034
+version 0.035
 
 =head1 SYNOPSIS
 

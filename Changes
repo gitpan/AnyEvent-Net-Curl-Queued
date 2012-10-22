@@ -1,6 +1,12 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.034 2012-10-22T13:16:49
+0.035 2012-10-22T18:58:35
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - Net::Curl::Share instance destruction code is FUBAR; storing it inside a
+   Mo[ou]se attribute was a really bad idea :~(
+
+
+v0.034 2012-10-22T12:46:49
  [Stanislaw Pusep <creaktive@gmail.com>]
  - weak_ref unnecessary, after all
 
