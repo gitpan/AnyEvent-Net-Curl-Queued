@@ -8,6 +8,7 @@ build_requires:
   FindBin: 0
   List::Util: 0
   Net::Curl: 0
+  Test::Exception: 0
   Test::HTTP::AnyEvent::Server: 0
   Test::More: 0
   Test::Warn: 0
@@ -50,4 +51,4 @@ resources:
   bugtracker: https://github.com/creaktive/AnyEvent-Net-Curl-Queued/issues
   homepage: https://github.com/creaktive/AnyEvent-Net-Curl-Queued
   repository: git://github.com/creaktive/AnyEvent-Net-Curl-Queued.git
-version: 0.035
+version: 0.036

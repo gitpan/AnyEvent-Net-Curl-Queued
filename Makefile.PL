@@ -17,6 +17,7 @@ my %WriteMakefileArgs = (
     "FindBin" => 0,
     "List::Util" => 0,
     "Net::Curl" => 0,
+    "Test::Exception" => 0,
     "Test::HTTP::AnyEvent::Server" => 0,
     "Test::More" => 0,
     "Test::Warn" => 0
@@ -56,7 +57,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.035",
+  "VERSION" => "0.036",
   "test" => {
     "TESTS" => "t/*.t"
   }

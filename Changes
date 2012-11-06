@@ -1,6 +1,31 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.035 2012-10-22T18:58:35
+0.036 2012-11-06T15:06:10
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - curly brackets cleanup
+
+ - initialization exception testing
+
+ - proper usage of BUILDARGS/FOREIGNBUILDARGS
+
+ - fixing cyclic references
+
+ - benchmark results update
+
+ - less verbose recursion test
+
+ - benchmark suite fixes
+
+ - Test::Memory::Cycle test implemented
+
+ - clearer benchmark reasoning
+
+ - major breakthrough in Net::Curl::*  "unreferenced scalar" fixing!
+
+ - attempt to fight 1-millisecond timeout (again)
+
+
+v0.035 2012-10-22T18:49:04
  [Stanislaw Pusep <creaktive@gmail.com>]
  - Net::Curl::Share instance destruction code is FUBAR; storing it inside a
    Mo[ou]se attribute was a really bad idea :~(
@@ -338,56 +363,5 @@ v0.012 2012-02-01T16:33:34
  - AENCQ object now reusable
 
  - fixed kwalitee test due to new Parse::RecDescent release
-
-
-v0.011 2011-11-06T19:58:44
- [Stanislaw Pusep <creaktive@gmail.com>]
- - watchdog executes $self->multi->perform
-
-
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - watchdog
-
- - Changes
-
-
-v0.010 2011-10-26T13:33:09
- [Stanislaw Pusep <creaktive@gmail.com>]
- - Fixed 'Attempt to free unreferenced scalar: SV 0xdeadbeef during global
-   destruction.' in t/01-net-curl-compatibility.t
-
- - Changes
-
-
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - YADA alias
-
- - default timeout/retry update
-
-
-v0.009 2011-10-23T12:50:02
- [Stanislaw Pusep <creaktive@gmail.com>]
- - max connections editable on-fly
-
- - retry CodeRef fix
-
- - eg/ fix
-
- - Changes
-
-
-v0.008 2011-10-23T00:47:12
- [Stanislaw Pusep <creaktive@gmail.com>]
- - re-enqueued requests are forced to bypass de-duplication filter
-
- - allow_dups configurable
-
- - URI coerce typo fix
-
- - better cloning
-
-
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - Changes
 
 

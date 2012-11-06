@@ -55,6 +55,8 @@ t/61-nest.t
 t/70-timeout.t
 t/71-bad-address.t
 t/72-non-http.t
+t/73-cycle.t
+t/74-exception.t
 t/author-critic.t
 t/author-test-eol.t
 t/release-cpan-changes.t

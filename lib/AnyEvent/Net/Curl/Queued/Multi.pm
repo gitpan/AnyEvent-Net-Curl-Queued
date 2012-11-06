@@ -29,7 +29,8 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.035'; # VERSION
+our $VERSION = '0.036'; # VERSION
+
 
 sub BUILD {
     my ($self) = @_;
@@ -39,9 +40,7 @@ sub BUILD {
     $self->setopt(Net::Curl::Multi::CURLMOPT_TIMERFUNCTION      => \&_cb_timer);
 }
 
-################# HACK #################
-around BUILDARGS => sub { $_[2] // {} };
-################# HACK #################
+sub BUILDARGS { $_[-1] }
 
 # socket callback: will be called by curl any time events on some
 # socket must be updated
@@ -111,6 +110,8 @@ sub _cb_timer {
         # before you call curl_multi_perform() again.
 
         $self->set_timer(AE::timer 1, 1, $cb);
+    } elsif ($timeout_ms < 10) {
+        # Short timeouts are just... Weird!
     } else {
         # This will trigger timeouts if there are any.
         $self->set_timer(AE::timer $timeout_ms / 1000, 0, $cb);
@@ -188,7 +189,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.035
+version 0.036
 
 =head1 SYNOPSIS
 
@@ -235,6 +236,9 @@ Wrapper around the C<socket_action()> from L<Net::Curl::Multi>.
 
 Overrides the C<add_handle()> from L<Net::Curl::Multi>.
 Add one handle and kickstart download.
+
+=for Pod::Coverage BUILD
+BUILDARGS
 
 =head1 SEE ALSO
 

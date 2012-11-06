@@ -23,7 +23,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.035'; # VERSION
+our $VERSION = '0.036'; # VERSION
 
 subtype 'QueueType'
     => as 'Object'
@@ -71,7 +71,7 @@ has final_url   => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI',
 has opts        => (is => 'ro', isa => 'HashRef', default => sub { {} });
 
 
-has queue       => (is => 'rw', isa => 'QueueType');
+has queue       => (is => 'rw', isa => 'QueueType', weak_ref => 1);
 
 
 has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Digest::SHA(256) }, lazy => 1);
@@ -89,9 +89,25 @@ has use_stats   => (is => 'ro', isa => 'Bool', default => 0);
 
 has [qw(on_init on_finish)] => (is => 'ro', isa => 'CodeRef');
 
-################# HACK #################
-around BUILDARGS => sub { $_[2] // {} };
-################# HACK #################
+
+sub BUILDARGS {
+    ($_[0] eq ref $_[-1])
+        ? $_[-1]
+        : FOREIGNBUILDARGS(@_);
+}
+
+sub FOREIGNBUILDARGS {
+    my $class = shift;
+    if (@_ == 1 and q(HASH) eq ref $_[0]) {
+        return shift;
+    } elsif (@_ == 1) {
+        return { initial_url => shift };
+    } elsif (@_ % 2 == 0) {
+        return { @_ };
+    } else {
+        confess 'Should be initialized as ' . $class . '->new(Hash|HashRef|URL)';
+    }
+}
 
 
 sub unique {
@@ -344,7 +360,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.035
+version 0.036
 
 =head1 SYNOPSIS
 
@@ -566,6 +582,9 @@ C<ArrayRef> parameter will return a list:
         $self->getinfo([qw(content_type speed_download primary_ip)]);
 
 Complete list of options: L<http://curl.haxx.se/libcurl/c/curl_easy_getinfo.html>
+
+=for Pod::Coverage BUILDARGS
+FOREIGNBUILDARGS
 
 =head1 SEE ALSO
 
