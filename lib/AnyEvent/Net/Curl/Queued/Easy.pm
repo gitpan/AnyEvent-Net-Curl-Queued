@@ -23,7 +23,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.036'; # VERSION
+our $VERSION = '0.037'; # VERSION
 
 subtype 'QueueType'
     => as 'Object'
@@ -74,7 +74,7 @@ has opts        => (is => 'ro', isa => 'HashRef', default => sub { {} });
 has queue       => (is => 'rw', isa => 'QueueType', weak_ref => 1);
 
 
-has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Digest::SHA(256) }, lazy => 1);
+has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { Digest::SHA->new(256) }, lazy => 1);
 
 
 has res         => (is => 'ro', isa => 'HTTP::Response', writer => 'set_res');
@@ -95,6 +95,7 @@ sub BUILDARGS {
         ? $_[-1]
         : FOREIGNBUILDARGS(@_);
 }
+
 
 sub FOREIGNBUILDARGS {
     my $class = shift;
@@ -126,6 +127,7 @@ sub sign {
     my ($self, $str) = @_;
 
     # add entropy to the signature
+    Encode::_utf8_off($str);
     $self->sha->add($str);
 }
 
@@ -185,9 +187,12 @@ sub _finish {
 
     # optionally encapsulate with HTTP::Response
     if ($self->http_response and $self->final_url->scheme =~ m{^https?$}i) {
+        # libcurl concatenates headers of redirections!
+        my $header = ${$self->header};
+        $header =~ s/^.*(?:\015\012?|\012\015){2}(?!$)//sx;
         $self->set_res(
             HTTP::Response->parse(
-                ${$self->header}
+                $header
                 . ${$self->data}
             )
         );
@@ -360,7 +365,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.036
+version 0.037
 
 =head1 SYNOPSIS
 
@@ -583,8 +588,14 @@ C<ArrayRef> parameter will return a list:
 
 Complete list of options: L<http://curl.haxx.se/libcurl/c/curl_easy_getinfo.html>
 
+=head1 FUNCTIONS
+
+=head2 FOREIGNBUILDARGS
+
+Internal.
+Required for L<MooseX::NonMoose> to operate properly on C<new> parameters.
+
 =for Pod::Coverage BUILDARGS
-FOREIGNBUILDARGS
 
 =head1 SEE ALSO
 

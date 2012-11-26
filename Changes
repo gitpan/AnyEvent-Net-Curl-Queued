@@ -1,6 +1,15 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.036 2012-11-06T15:06:10
+0.037 2012-11-26T13:15:04
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - fixed encoding issues revealed by upgrading to Digest::SHA v5.74
+
+ - postponing $cv->send to properly destroy ::Multi instance
+
+ - followlocation-caused header propagation fix
+
+
+v0.036 2012-11-06T15:00:02
  [Stanislaw Pusep <creaktive@gmail.com>]
  - curly brackets cleanup
 

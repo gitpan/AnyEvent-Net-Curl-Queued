@@ -14,7 +14,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.036'; # VERSION
+our $VERSION = '0.037'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -132,7 +132,7 @@ sub start {
 sub empty {
     my ($self) = @_;
 
-    $self->cv->send
+    AE::postpone { $self->cv->send }
         if
             $self->completed > 0
             and $self->count == 0
@@ -217,7 +217,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.036
+version 0.037
 
 =head1 SYNOPSIS
 
