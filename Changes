@@ -1,6 +1,33 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.037 2012-11-26T13:15:04
+0.038 2013-01-26T12:07:35
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - ooops, Mojo can't start/stop several times anymore?
+
+ - Mojo::UserAgent benchmark overhaul
+
+ - setting CURLOPT_POSTFIELDS to a HashRef converts to JSON automatically
+
+ - removed useless eval check from AE::N::C::Const
+
+ - useless meta->name removed
+
+ - full perlcritic harsh compliance
+
+ - calming down the perlcritic
+
+ - Dist::Zilla bump
+
+ - better traps for t/70-timeout.t
+
+ - fragment supression tested
+
+ - disabling Net::Curl::* prototypes
+
+ - messing around
+
+
+v0.037 2012-11-25T18:55:34
  [Stanislaw Pusep <creaktive@gmail.com>]
  - fixed encoding issues revealed by upgrading to Digest::SHA v5.74
 

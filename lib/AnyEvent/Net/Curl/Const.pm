@@ -10,10 +10,10 @@ use Carp qw(carp);
 use Net::Curl::Easy;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '0.037'; # VERSION
+our $VERSION = '0.038'; # VERSION
 
 
-our (%const_info, %const_opt);
+my (%const_info, %const_opt);
 
 sub info {
     my ($name) = @_;
@@ -33,17 +33,17 @@ sub _curl_const {
     my ($suffix => $key) = @_;
     return $key if looks_like_number($key);
 
-    $key =~ s{^Net::Curl::Easy::}{}i;
+    $key =~ s{^Net::Curl::Easy::}{}ix;
     $key =~ y{-}{_};
-    $key =~ s{\W}{}g;
+    $key =~ s{\W}{}gx;
     $key = uc $key;
-    $key = "${suffix}_${key}" if $key !~ m{^${suffix}_};
+    $key = "${suffix}_${key}" if $key !~ m{^${suffix}_}x;
 
-    my $val;
-    eval {
-        no strict 'refs';   ## no critic
+    my $val = eval {
+        ## no critic (ProhibitNoStrict)
+        no strict 'refs';
         my $const_name = 'Net::Curl::Easy::' . $key;
-        $val = *$const_name->();
+        *$const_name->();
     };
     carp "Invalid libcurl constant: $key" if $@;
 
@@ -65,7 +65,7 @@ AnyEvent::Net::Curl::Const - Access Net::Curl::* constants by name
 
 =head1 VERSION
 
-version 0.037
+version 0.038
 
 =head1 SYNOPSIS
 
@@ -138,7 +138,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

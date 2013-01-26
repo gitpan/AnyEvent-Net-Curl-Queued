@@ -12,15 +12,16 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "Any::Moose wrapper for queued downloads via Net::Curl & AnyEvent",
   "AUTHOR" => "Stanislaw Pusep <stas\@sysd.org>",
   "BUILD_REQUIRES" => {
+    "Data::Dumper" => 0,
     "File::Find" => 0,
     "File::Temp" => 0,
     "FindBin" => 0,
     "List::Util" => 0,
-    "Net::Curl" => 0,
     "Test::Exception" => 0,
     "Test::HTTP::AnyEvent::Server" => 0,
     "Test::More" => 0,
-    "Test::Warn" => 0
+    "Test::Warn" => 0,
+    "Time::HiRes" => 0
   },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -41,7 +42,7 @@ my %WriteMakefileArgs = (
     "File::Copy" => 0,
     "Getopt::Long" => 0,
     "HTTP::Response" => 0,
-    "JSON::XS" => 0,
+    "JSON" => 0,
     "Mouse::Util::TypeConstraints" => 0,
     "MouseX::NativeTraits" => 0,
     "MouseX::NonMoose" => 0,
@@ -57,7 +58,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.037",
+  "VERSION" => "0.038",
   "test" => {
     "TESTS" => "t/*.t"
   }

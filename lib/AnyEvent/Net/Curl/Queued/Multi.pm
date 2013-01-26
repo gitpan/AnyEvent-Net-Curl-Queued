@@ -11,6 +11,12 @@ use Carp qw(confess);
 use Any::Moose;
 use Any::Moose qw(X::NonMoose);
 use Net::Curl::Multi;
+use Scalar::Util qw(set_prototype);
+
+# kill Net::Curl::Mulii prototypes as they wreck around/before/after method modifiers
+set_prototype \&Net::Curl::Multi::new           => undef;
+set_prototype \&Net::Curl::Multi::socket_action => undef;
+set_prototype \&Net::Curl::Multi::add_handle    => undef;
 
 extends 'Net::Curl::Multi';
 
@@ -29,7 +35,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.037'; # VERSION
+our $VERSION = '0.038'; # VERSION
 
 
 sub BUILD {
@@ -38,9 +44,12 @@ sub BUILD {
     $self->setopt(Net::Curl::Multi::CURLMOPT_MAXCONNECTS        => $self->max << 2);
     $self->setopt(Net::Curl::Multi::CURLMOPT_SOCKETFUNCTION     => \&_cb_socket);
     $self->setopt(Net::Curl::Multi::CURLMOPT_TIMERFUNCTION      => \&_cb_timer);
+
+    return;
 }
 
-sub BUILDARGS { $_[-1] }
+## no critic (RequireArgUnpacking)
+sub BUILDARGS { return $_[-1] }
 
 # socket callback: will be called by curl any time events on some
 # socket must be updated
@@ -121,14 +130,11 @@ sub _cb_timer {
 }
 
 
-#around socket_action => sub {
-#    my $orig = shift;
-#    my $self = shift;
-sub socket_action {
+around socket_action => sub {
+    my $orig = shift;
     my $self = shift;
 
-    #$self->active($self->$orig(@_));
-    $self->set_active($self->SUPER::socket_action(@_));
+    $self->set_active($orig->($self => @_));
 
     my $i = 0;
     while (my (undef, $easy, $result) = $self->info_read) {
@@ -142,16 +148,12 @@ sub socket_action {
 };
 
 
-#around add_handle => sub {
-#    my $orig = shift;
-#    my $self = shift;
-#    my $easy = shift;
-sub add_handle {
+around add_handle => sub {
+    my $orig = shift;
     my $self = shift;
     my $easy = shift;
 
-    #my $r = $self->$orig($easy);
-    my $r = $self->SUPER::add_handle($easy);
+    my $r = $orig->($self => $easy);
 
     # Calling socket_action with default arguments will trigger
     # socket callback and register IO events.
@@ -189,7 +191,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.037
+version 0.038
 
 =head1 SYNOPSIS
 
@@ -268,7 +270,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

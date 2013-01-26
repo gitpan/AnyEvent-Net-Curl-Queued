@@ -12,18 +12,31 @@ use Carp qw(carp confess);
 use Digest::SHA;
 use Encode;
 use HTTP::Response;
-use JSON::XS;
+use JSON;
 use Any::Moose;
 use Any::Moose qw(::Util::TypeConstraints);
 use Any::Moose qw(X::NonMoose);
+use Scalar::Util qw(set_prototype);
 use URI;
+
+# kill Net::Curl::Easy prototypes as they wreck around/before/after method modifiers
+set_prototype \&Net::Curl::Easy::new        => undef;
+set_prototype \&Net::Curl::Easy::getinfo    => undef;
+set_prototype \&Net::Curl::Easy::setopt     => undef;
 
 extends 'Net::Curl::Easy';
 
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.037'; # VERSION
+our $VERSION = '0.038'; # VERSION
+
+has json        => (
+    is          => 'ro',
+    isa         => 'JSON',
+    default     => sub { JSON->new->utf8->allow_blessed->convert_blessed },
+    lazy        => 1,
+);
 
 subtype 'QueueType'
     => as 'Object'
@@ -90,8 +103,10 @@ has use_stats   => (is => 'ro', isa => 'Bool', default => 0);
 has [qw(on_init on_finish)] => (is => 'ro', isa => 'CodeRef');
 
 
+## no critic (RequireArgUnpacking)
+
 sub BUILDARGS {
-    ($_[0] eq ref $_[-1])
+    return ($_[0] eq ref $_[-1])
         ? $_[-1]
         : FOREIGNBUILDARGS(@_);
 }
@@ -127,8 +142,9 @@ sub sign {
     my ($self, $str) = @_;
 
     # add entropy to the signature
+    ## no critic (ProtectPrivateSubs)
     Encode::_utf8_off($str);
-    $self->sha->add($str);
+    return $self->sha->add($str);
 }
 
 
@@ -160,7 +176,7 @@ sub init {
     }
 
     # salt
-    $self->sign($self->meta->name);
+    $self->sign(ref($self));
     # URL; GET parameters included
     $self->sign($url->as_string);
 
@@ -169,15 +185,18 @@ sub init {
 
     # call the optional callback
     $self->on_init->(@_) if ref($self->on_init) eq 'CODE';
+
+    return;
 }
 
 
 sub has_error {
     # very bad error
-    0 + $_[0]->curl_result != Net::Curl::Easy::CURLE_OK;
+    return 0 + $_[0]->curl_result != Net::Curl::Easy::CURLE_OK;
 }
 
 
+## no critic (ProhibitUnusedPrivateSubroutines)
 sub _finish {
     my ($self, $result) = @_;
 
@@ -186,7 +205,7 @@ sub _finish {
     $self->set_final_url($self->getinfo(Net::Curl::Easy::CURLINFO_EFFECTIVE_URL));
 
     # optionally encapsulate with HTTP::Response
-    if ($self->http_response and $self->final_url->scheme =~ m{^https?$}i) {
+    if ($self->http_response and $self->final_url->scheme =~ m{^https?$}ix) {
         # libcurl concatenates headers of redirections!
         my $header = ${$self->header};
         $header =~ s/^.*(?:\015\012?|\012\015){2}(?!$)//sx;
@@ -198,7 +217,7 @@ sub _finish {
         );
 
         my $msg = $self->res->message // '';
-        $msg =~ s/^\s+|\s+$//gs;
+        $msg =~ s/^\s+|\s+$//gsx;
         $self->res->message($msg);
     }
 
@@ -221,6 +240,8 @@ sub _finish {
 
     # move queue
     $self->queue->start;
+
+    return;
 }
 
 sub finish {
@@ -228,6 +249,8 @@ sub finish {
 
     # call the optional callback
     $self->on_finish->($self, $result) if ref($self->on_finish) eq 'CODE';
+
+    return;
 }
 
 
@@ -237,7 +260,7 @@ sub clone {
     # silently ignore unsupported parameters
     $param = {} unless 'HASH' eq ref $param;
 
-    my $class = $self->meta->name;
+    my $class = ref($self);
     $param->{$_} = $self->$_()
         for qw(
             http_response
@@ -262,10 +285,8 @@ sub clone {
 }
 
 
-#around setopt => sub {
-#    my $orig = shift;
-#    my $self = shift;
-sub setopt {
+around setopt => sub {
+    my $orig = shift;
     my $self = shift;
 
     if (@_) {
@@ -282,30 +303,46 @@ sub setopt {
         while (my ($key, $val) = each %param) {
             $key = AnyEvent::Net::Curl::Const::opt($key);
             if ($key == Net::Curl::Easy::CURLOPT_POSTFIELDS) {
-                $self->set_post_content($val);
+                my $is_json = 0;
+                ($val, $is_json) = $self->_setopt_postfields($val);
 
-                my $tmp;
-                eval { $tmp = encode_utf8($val); decode_json($tmp) };
-                unless ($@) {
-                    $self->SUPER::setopt(
-                        Net::Curl::Easy::CURLOPT_HTTPHEADER,
-                        [ 'Content-Type: application/json; charset=utf-8' ],
-                    );
-                    $val = $tmp;
-                }
+                $orig->($self =>
+                    Net::Curl::Easy::CURLOPT_HTTPHEADER,
+                    [ 'Content-Type: application/json; charset=utf-8' ],
+                ) if $is_json;
             }
-            $self->SUPER::setopt($key, $val);
+            $orig->($self => $key, $val);
         }
     } else {
         carp "Specify at least one OPTION/VALUE pair!";
     }
 };
 
+sub _setopt_postfields {
+    my ($self, $val) = @_;
 
-#around getinfo => sub {
-#    my $orig = shift;
-#    my $self = shift;
-sub getinfo {
+    my $is_json = 0;
+    if ('HASH' eq ref $val) {
+        ++$is_json;
+        $val = $self->json->encode($val);
+    } else {
+        # some DWIMmery here!
+        # application/x-www-form-urlencoded is supposed to have a 7-bit encoding
+        $val = encode_utf8($val)
+            if utf8::is_utf8($val);
+
+        my $obj;
+        ++$is_json
+            if $obj = eval { $self->json->decode($val) }
+            and not $@;
+    }
+
+    return ($self->set_post_content($val), $is_json);
+}
+
+
+around getinfo => sub {
+    my $orig = shift;
     my $self = shift;
 
     for (ref($_[0])) {
@@ -314,8 +351,7 @@ sub getinfo {
             for my $name (@{$_[0]}) {
                 my $const = AnyEvent::Net::Curl::Const::info($name);
                 next unless defined $const;
-                #push @val, $self->$orig($const);
-                push @val, $self->SUPER::getinfo($const);
+                push @val, $self->$orig($const);
             }
             return @val;
         } when ('HASH') {
@@ -323,8 +359,7 @@ sub getinfo {
             for my $name (keys %{$_[0]}) {
                 my $const = AnyEvent::Net::Curl::Const::info($name);
                 next unless defined $const;
-                #$val{$name} = $self->$orig($const);
-                $val{$name} = $self->SUPER::getinfo($const);
+                $val{$name} = $self->$orig($const);
             }
 
             # write back to HashRef if called under void context
@@ -338,8 +373,7 @@ sub getinfo {
             }
         } when ('') {
             my $const = AnyEvent::Net::Curl::Const::info($_[0]);
-            #return defined $const ? $self->$orig($const) : $const;
-            return defined $const ? $self->SUPER::getinfo($const) : $const;
+            return defined $const ? $self->$orig($const) : $const;
         } default {
             carp "getinfo() expects array/hash reference or string!";
             return;
@@ -365,7 +399,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.037
+version 0.038
 
 =head1 SYNOPSIS
 
@@ -558,7 +592,7 @@ Or even shorter:
 
 Complete list of options: L<http://curl.haxx.se/libcurl/c/curl_easy_setopt.html>
 
-If C<CURLOPT_POSTFIELDS> looks like a valid JSON (validates via L<JSON::XS>),
+If C<CURLOPT_POSTFIELDS> is a C<HashRef> or looks like a valid JSON (validates via L<JSON>),
 it is encoded as UTF-8 and C<Content-Type: application/json; charset=utf-8> header is set automatically.
 
 =head2 getinfo(VAR_NAME [, VAR_NAME])
@@ -621,7 +655,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

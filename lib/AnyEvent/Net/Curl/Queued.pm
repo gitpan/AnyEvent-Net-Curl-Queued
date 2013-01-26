@@ -14,7 +14,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.037'; # VERSION
+our $VERSION = '0.038'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -54,10 +54,12 @@ has queue       => (
 
 # Mouse traits are utterly broken!!!
 
-sub queue_push      { push @{shift->queue}, @_ }
-sub queue_unshift   { unshift @{shift->queue}, @_ }
-sub dequeue         { shift @{shift->queue} }
-sub count           { scalar @{shift->queue} }
+## no critic (RequireArgUnpacking)
+
+sub queue_push      { return 0 + push @{shift->queue}, @_ }
+sub queue_unshift   { return 0 + unshift @{shift->queue}, @_ }
+sub dequeue         { return shift @{shift->queue} }
+sub count           { return 0 + @{shift->queue} }
 
 
 has share       => (
@@ -92,7 +94,11 @@ sub BUILD {
 
     $self->share->setopt(Net::Curl::Share::CURLSHOPT_SHARE, Net::Curl::Share::CURL_LOCK_DATA_COOKIE);   # 2
     $self->share->setopt(Net::Curl::Share::CURLSHOPT_SHARE, Net::Curl::Share::CURL_LOCK_DATA_DNS);      # 3
+
+    ## no critic (RequireCheckingReturnValueOfEval)
     eval { $self->share->setopt(Net::Curl::Share::CURLSHOPT_SHARE, Net::Curl::Share::CURL_LOCK_DATA_SSL_SESSION) };
+
+    return;
 }
 
 sub BUILDARGS {
@@ -126,6 +132,8 @@ sub start {
 
     # check if queue is empty
     $self->empty;
+
+    return;
 }
 
 
@@ -137,6 +145,8 @@ sub empty {
             $self->completed > 0
             and $self->count == 0
             and $self->multi->handles == 0;
+
+    return;
 }
 
 
@@ -153,14 +163,15 @@ sub add {
     $worker->init;
 
     # check if already processed
-    if (
-        $self->allow_dups
+    if ($self->allow_dups
         or $worker->force
         or ++$self->unique->{$worker->unique} == 1
     ) {
         # fire
         $self->multi->add_handle($worker);
     }
+
+    return;
 }
 
 
@@ -169,6 +180,8 @@ sub append {
 
     $self->queue_push($worker);
     $self->start;
+
+    return;
 }
 
 
@@ -177,9 +190,12 @@ sub prepend {
 
     $self->queue_unshift($worker);
     $self->start;
+
+    return;
 }
 
 
+## no critic (ProhibitBuiltinHomonyms)
 sub wait {
     my ($self) = @_;
 
@@ -197,6 +213,8 @@ sub wait {
             timeout     => $self->timeout,
         })
     );
+
+    return;
 }
 
 
@@ -217,7 +235,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.037
+version 0.038
 
 =head1 SYNOPSIS
 
@@ -591,7 +609,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

@@ -14,7 +14,7 @@ extends 'AnyEvent::Net::Curl::Queued';
 
 use YADA::Worker;
 
-our $VERSION = '0.037'; # VERSION
+our $VERSION = '0.038'; # VERSION
 
 # serious DWIMmery ahead!
 around qw(append prepend) => sub {
@@ -25,7 +25,7 @@ around qw(append prepend) => sub {
         my (%init, @url);
         for my $arg (@_) {
             for (ref $arg) {
-                when ($_ eq '' or m{^URI::}) {
+                when ($_ eq '' or m{^URI::}x) {
                     push @url, $arg;
                 } when ('ARRAY') {
                     push @url, @{$arg};
@@ -77,7 +77,7 @@ YADA - "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 =head1 VERSION
 
-version 0.037
+version 0.038
 
 =head1 SYNOPSIS
 
@@ -235,7 +235,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

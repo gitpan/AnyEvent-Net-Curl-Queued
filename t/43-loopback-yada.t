@@ -3,8 +3,9 @@ use strict;
 use utf8;
 use warnings qw(all);
 
+use Encode;
+use JSON;
 use Test::More;
-use Net::Curl;
 
 use_ok('YADA');
 use_ok('YADA::Worker');
@@ -34,8 +35,8 @@ for my $j (1 .. 10) {
                 on_init     => sub {
                     my ($self) = @_;
 
-                    $self->sign($post);
                     $self->setopt(postfields => $post);
+                    $self->sign($self->post_content);
                 },
                 on_finish   => sub {
                     my ($self, $result) = @_;
@@ -54,14 +55,43 @@ for my $j (1 .. 10) {
                     ok($result == 0, 'got CURLE_OK');
                     ok(!$self->has_error, "libcurl message: '$result'");
 
-                    like(${$self->data}, qr{\bContent-Type:\s*application/json\b}i, 'got data: ' . ${$self->data});
-                    like(${$self->data}, qr{\bUser-Agent\s*:\s*\Q$ua_string\E\b}s, 'got User-Agent tag');
-                    like(${$self->data}, qr{\bCookie\s*:\s*time=\d+\b}s, 'got Cookie tag');
+                    like(${$self->data}, qr{\bContent-Type:\s*application/json\b}ix, 'got data: ' . ${$self->data});
+                    like(${$self->data}, qr{\bUser-Agent\s*:\s*\Q$ua_string\E\b}sx, 'got User-Agent tag');
+                    like(${$self->data}, qr{\bCookie\s*:\s*time=\d+\b}sx, 'got Cookie tag');
                 },
             )
         });
     }
+
+    my $json_string = qq({ "word": "ímã", "j": $j, "seed": @{[ rand ]} });
+    my $json_hash = { word => "ímã", j => $j, seed => rand };
+    for my $post (
+        $json_string,
+        encode_utf8($json_string) . "\n",           # whitespace padding hack
+        encode_json($json_hash),
+        decode_utf8(encode_json($json_hash)) . "\n",# whitespace padding hack
+        { ref => 1, %$json_hash },
+    ) {
+        $q->append(sub {
+            YADA::Worker->new(
+                initial_url => $server->uri . 'echo/body',
+                on_init     => sub {
+                    my ($self) = @_;
+
+                    $self->setopt(postfields => $post);
+                    $self->sign($self->post_content);
+                },
+                on_finish   => sub {
+                    my ($self, $result) = @_;
+                    like(${$self->data}, qr/^\s*\{[^\}]+\}\s*$/sx, ${$self->data});
+                    my $json = decode_json(${$self->data});
+                    is(uc $json->{word}, 'ÍMÃ', 'encoding');
+                },
+            )
+        });
+    }
+
     $q->wait;
 }
 
-done_testing(6 + 8 * 100);
+done_testing(6 + 8 * 100 + 2 * 50);
