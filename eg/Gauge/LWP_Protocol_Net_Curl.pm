@@ -1,4 +1,4 @@
-package Gauge::LWP_Curl;
+package Gauge::LWP_Protocol_Net_Curl;
 use strict;
 use utf8;
 use warnings qw(all);
@@ -6,14 +6,15 @@ use warnings qw(all);
 use Any::Moose;
 with qw(Gauge::Role);
 
-use LWP::Curl;
+use LWP::Protocol::Net::Curl;
+use LWP::UserAgent;
 
 sub run {
     my ($self) = @_;
 
-    my $lwp_curl = LWP::Curl->new(user_agent => qq(LWP::Curl/$LWP::Curl::VERSION));
+    my $lwp = LWP::UserAgent->new;
     $self->run_forked(sub {
-        $lwp_curl->get(shift);
+        $lwp->get(shift);
     });
 
     return;

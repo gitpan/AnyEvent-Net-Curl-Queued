@@ -43,6 +43,7 @@ requires:
   Scalar::Util: 0
   URI: 0
   autodie: 0
+  base: 0
   feature: 0
   perl: 5.010
   strict: 0
@@ -52,4 +53,4 @@ resources:
   bugtracker: https://github.com/creaktive/AnyEvent-Net-Curl-Queued/issues
   homepage: https://github.com/creaktive/AnyEvent-Net-Curl-Queued
   repository: git://github.com/creaktive/AnyEvent-Net-Curl-Queued.git
-version: 0.038
+version: 0.039

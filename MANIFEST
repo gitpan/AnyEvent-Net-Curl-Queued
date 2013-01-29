@@ -13,6 +13,7 @@ eg/Gauge/Furl.pm
 eg/Gauge/HTTP_Lite.pm
 eg/Gauge/HTTP_Tiny.pm
 eg/Gauge/LWP_Curl.pm
+eg/Gauge/LWP_Protocol_Net_Curl.pm
 eg/Gauge/LWP_UserAgent.pm
 eg/Gauge/Mojo_UserAgent.pm
 eg/Gauge/Parallel_Downloader.pm
@@ -27,6 +28,7 @@ eg/crawl-apache.pl
 eg/fetch-urls.pl
 eg/queue
 eg/simple.pl
+eg/yada-crawler.pl
 lib/AnyEvent/Net/Curl/Const.pm
 lib/AnyEvent/Net/Curl/Queued.pm
 lib/AnyEvent/Net/Curl/Queued/Easy.pm

@@ -29,7 +29,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.038'; # VERSION
+our $VERSION = '0.039'; # VERSION
 
 has json        => (
     is          => 'ro',
@@ -69,7 +69,8 @@ has force       => (is => 'ro', isa => 'Bool', default => 0);
 has header      => (is => 'rw', isa => 'Ref');
 
 
-has http_response => (is => 'ro', isa => 'Bool', default => 0);
+has _autodecoded => (is => 'rw', isa => 'Bool', default => 0);
+has http_response => (is => 'ro', isa => 'Bool', default => 0, writer => 'set_http_response');
 
 
 has post_content => (is => 'ro', isa => 'Str', default => '', writer => 'set_post_content');
@@ -90,7 +91,8 @@ has queue       => (is => 'rw', isa => 'QueueType', weak_ref => 1);
 has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { Digest::SHA->new(256) }, lazy => 1);
 
 
-has res         => (is => 'ro', isa => 'HTTP::Response', writer => 'set_res');
+has response    => (is => 'ro', isa => 'HTTP::Response', writer => 'set_response');
+sub res { my ($self, @args) = @_; return $self->response(@args) }
 
 
 has retry       => (is => 'ro', isa => 'Int', default => 10);
@@ -173,6 +175,8 @@ sub init {
             Net::Curl::Easy::CURLOPT_TIMEOUT,   $self->queue->timeout,
         );
         $self->setopt($self->queue->common_opts);
+        $self->set_http_response($self->queue->http_response)
+            if $self->queue->http_response;
     }
 
     # salt
@@ -209,16 +213,19 @@ sub _finish {
         # libcurl concatenates headers of redirections!
         my $header = ${$self->header};
         $header =~ s/^.*(?:\015\012?|\012\015){2}(?!$)//sx;
-        $self->set_res(
+        $self->set_response(
             HTTP::Response->parse(
                 $header
                 . ${$self->data}
             )
         );
 
-        my $msg = $self->res->message // '';
+        $self->response->headers->header(content_encoding => 'identity')
+            if $self->_autodecoded;
+
+        my $msg = $self->response->message // '';
         $msg =~ s/^\s+|\s+$//gsx;
-        $self->res->message($msg);
+        $self->response->message($msg);
     }
 
     # wrap around the extendible interface
@@ -310,6 +317,9 @@ around setopt => sub {
                     Net::Curl::Easy::CURLOPT_HTTPHEADER,
                     [ 'Content-Type: application/json; charset=utf-8' ],
                 ) if $is_json;
+            } elsif ($key == Net::Curl::Easy::CURLOPT_ENCODING) {
+                $self->_autodecoded(1);
+                $val = $self->_setopt_encoding($val);
             }
             $orig->($self => $key, $val);
         }
@@ -332,12 +342,21 @@ sub _setopt_postfields {
             if utf8::is_utf8($val);
 
         my $obj;
-        ++$is_json
-            if $obj = eval { $self->json->decode($val) }
-            and not $@;
+        ++$is_json if 'HASH' eq ref($obj = eval { $self->json->decode($val) });
     }
 
     return ($self->set_post_content($val), $is_json);
+}
+
+sub _setopt_encoding {
+    my ($self, $val) = @_;
+
+    # stolen from LWP::Protocol::Net::Curl
+    my @encoding =
+        map { /^(?:x-)?(deflate|gzip|identity)$/ix ? lc $1 : () }
+        split /\s*,\s*/x, $val;
+
+    return join q(,) => @encoding;
 }
 
 
@@ -399,7 +418,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.038
+version 0.039
 
 =head1 SYNOPSIS
 
@@ -469,7 +488,8 @@ Header buffer.
 
 =head2 http_response
 
-Optionally encapsulate the response in L<HTTP::Response> (when the scheme is HTTP/HTTPS).
+Encapsulate the response with L<HTTP::Response> (only when the scheme is HTTP/HTTPS).
+Default: disabled.
 
 =head2 post_content
 
@@ -496,9 +516,13 @@ L<AnyEvent::Net::Curl::Queued> circular reference.
 Uniqueness detection helper.
 Setup via C<sign> and access through C<unique>.
 
-=head2 res
+=head2 response
 
 Encapsulated L<HTTP::Response> instance, if L</http_response> was set.
+
+=head2 res
+
+Deprecated alias for L</response>.
 
 =head2 retry
 
@@ -630,6 +654,7 @@ Internal.
 Required for L<MooseX::NonMoose> to operate properly on C<new> parameters.
 
 =for Pod::Coverage BUILDARGS
+res
 
 =head1 SEE ALSO
 

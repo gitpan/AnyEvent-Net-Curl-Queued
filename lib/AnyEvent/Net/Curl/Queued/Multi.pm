@@ -35,7 +35,7 @@ has max         => (is => 'ro', isa => 'Num', default => 4);
 
 has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
 
-our $VERSION = '0.038'; # VERSION
+our $VERSION = '0.039'; # VERSION
 
 
 sub BUILD {
@@ -134,7 +134,7 @@ around socket_action => sub {
     my $orig = shift;
     my $self = shift;
 
-    $self->set_active($orig->($self => @_));
+    my $active = $orig->($self => @_);
 
     my $i = 0;
     while (my (undef, $easy, $result) = $self->info_read) {
@@ -144,7 +144,7 @@ around socket_action => sub {
         ++$i;
     }
 
-    return $self->set_active($self->active - $i);
+    return $self->set_active($active - $i);
 };
 
 
@@ -191,7 +191,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.038
+version 0.039
 
 =head1 SYNOPSIS
 

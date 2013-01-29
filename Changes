@@ -1,6 +1,33 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.038 2013-01-26T12:07:35
+0.039 2013-01-29T10:03:25
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - eg/yada-crawler.pl cleanup
+
+ - YADA cleanup
+
+ - minor ::Multi accessor cleanup
+
+ - eg/yada-crawler.pl: simplified parser initialization
+
+ - fixed taskset(1) link
+
+ - http_message handling revamped
+
+ - added eg/yada-crawler.pl (not very clear example)
+
+ - benchmark update
+
+ - further benchmark normalization
+
+ - disable compression in Mojo::UA benchmark
+
+ - Mojo::UserAgent benchmark fixed (mea culpa)
+
+ - t/73-cycle.t is an author test
+
+
+v0.038 2013-01-24T22:11:02
  [Stanislaw Pusep <creaktive@gmail.com>]
  - ooops, Mojo can't start/stop several times anymore?
 

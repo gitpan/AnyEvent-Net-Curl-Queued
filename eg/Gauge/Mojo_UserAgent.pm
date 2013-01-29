@@ -6,12 +6,10 @@ use warnings qw(all);
 use Any::Moose;
 with qw(Gauge::Role);
 
-use Mojo::IOLoop;
-use Mojo::URL;
-use Mojo::UserAgent;
+use Mojolicious;
 
 my $loop;
-BEGIN { $loop = Mojo::IOLoop->singleton };
+BEGIN { $loop = Mojo::IOLoop->singleton }
 
 sub run {
     my ($self) = @_;
@@ -19,13 +17,20 @@ sub run {
     # stolen from http://blogs.perl.org/users/stas/2013/01/web-scraping-with-modern-perl-part-1.html
 
     # User agent following up to 5 redirects
-    my $ua = Mojo::UserAgent->new;
+    my $ua = Mojo::UserAgent->new(name => qq(Mojo::UserAgent/$Mojolicious::VERSION));
     my @urls = map { Mojo::URL->new($_) } @{$self->queue};
+
+    # Disable compression
+    $ua->on(start => sub {
+        my (undef, $tx) = @_;
+        $tx->req->headers->header(q(Accept-Encoding) => q(identity));
+    });
 
     # Keep track of active connections
     my $active = 0;
 
-    $loop->recurring(
+    # Update queue ASAP
+    my $id = $loop->recurring(
         0 => sub {
             for ($active + 1 .. $self->parallel) {
 
@@ -48,6 +53,9 @@ sub run {
 
     # Start event loop if necessary
     $loop->start unless $loop->is_running;
+
+    # Shutdown queue watcher
+    $loop->remove($id);
 
     return;
 }

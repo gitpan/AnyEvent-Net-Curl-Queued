@@ -10,7 +10,7 @@ use Carp qw(carp);
 use Net::Curl::Easy;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '0.038'; # VERSION
+our $VERSION = '0.039'; # VERSION
 
 
 my (%const_info, %const_opt);
@@ -65,7 +65,7 @@ AnyEvent::Net::Curl::Const - Access Net::Curl::* constants by name
 
 =head1 VERSION
 
-version 0.038
+version 0.039
 
 =head1 SYNOPSIS
 
