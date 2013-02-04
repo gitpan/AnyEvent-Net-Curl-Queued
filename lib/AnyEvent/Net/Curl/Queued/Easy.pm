@@ -29,7 +29,7 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.039'; # VERSION
+our $VERSION = '0.040'; # VERSION
 
 has json        => (
     is          => 'ro',
@@ -65,8 +65,7 @@ has data        => (is => 'ro', isa => 'ScalarRef', writer => 'set_data');
 has force       => (is => 'ro', isa => 'Bool', default => 0);
 
 
-# will be real-only in future releases!
-has header      => (is => 'rw', isa => 'Ref');
+has header      => (is => 'ro', isa => 'ScalarRef', writer => 'set_header');
 
 
 has _autodecoded => (is => 'rw', isa => 'Bool', default => 0);
@@ -157,7 +156,7 @@ sub init {
     my $data = '';
     $self->set_data(\$data);
     my $header = '';
-    $self->header(\$header);
+    $self->set_header(\$header);
 
     # fragment mangling
     my $url = $self->initial_url->clone;
@@ -418,7 +417,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
 
 =head1 VERSION
 
-version 0.039
+version 0.040
 
 =head1 SYNOPSIS
 
@@ -480,7 +479,7 @@ Receive buffer.
 
 =head2 force
 
-Force request processing, despite uniqueness signature.
+Force request processing, despite the uniqueness signature.
 
 =head2 header
 

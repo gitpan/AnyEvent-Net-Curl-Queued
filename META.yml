@@ -3,54 +3,32 @@ abstract: 'Any::Moose wrapper for queued downloads via Net::Curl & AnyEvent'
 author:
   - 'Stanislaw Pusep <stas@sysd.org>'
 build_requires:
-  Data::Dumper: 0
-  File::Find: 0
-  File::Temp: 0
-  FindBin: 0
-  List::Util: 0
   Test::Exception: 0
-  Test::HTTP::AnyEvent::Server: 0
-  Test::More: 0
   Test::Warn: 0
-  Time::HiRes: 0
-configure_requires:
-  ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300029, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Dist::Zilla version 4.300030, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: AnyEvent-Net-Curl-Queued
+recommends:
+  EV: 4.11
+  JSON::XS: 0
 requires:
   Any::Moose: 0
   AnyEvent: 0
-  Carp: 0
-  Config: 0
-  Digest::SHA: 0
-  Encode: 0
-  File::Copy: 0
-  Getopt::Long: 0
   HTTP::Response: 0
   JSON: 0
   Mouse::Util::TypeConstraints: 0
   MouseX::NativeTraits: 0
   MouseX::NonMoose: 0
-  Net::Curl::Easy: 0
-  Net::Curl::Multi: 0
-  Net::Curl::Share: 0
-  Pod::Usage: 0
-  Scalar::Util: 0
+  Net::Curl: 0.25
   URI: 0
   autodie: 0
-  base: 0
-  feature: 0
   perl: 5.010
-  strict: 0
-  utf8: 0
-  warnings: 0
 resources:
   bugtracker: https://github.com/creaktive/AnyEvent-Net-Curl-Queued/issues
   homepage: https://github.com/creaktive/AnyEvent-Net-Curl-Queued
   repository: git://github.com/creaktive/AnyEvent-Net-Curl-Queued.git
-version: 0.039
+version: 0.040

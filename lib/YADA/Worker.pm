@@ -8,7 +8,7 @@ use warnings qw(all);
 
 use base 'AnyEvent::Net::Curl::Queued::Easy';
 
-our $VERSION = '0.039'; # VERSION
+our $VERSION = '0.040'; # VERSION
 
 
 1;
@@ -25,7 +25,7 @@ YADA::Worker - "Yet Another Download Accelerator Worker": alias for AnyEvent::Ne
 
 =head1 VERSION
 
-version 0.039
+version 0.040
 
 =head1 DESCRIPTION
 

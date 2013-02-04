@@ -29,6 +29,7 @@ eg/fetch-urls.pl
 eg/queue
 eg/simple.pl
 eg/yada-crawler.pl
+inc/Test/HTTP/AnyEvent/Server.pm
 lib/AnyEvent/Net/Curl/Const.pm
 lib/AnyEvent/Net/Curl/Queued.pm
 lib/AnyEvent/Net/Curl/Queued/Easy.pm

@@ -1,6 +1,17 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.039 2013-01-29T10:03:25
+0.040 2013-02-04T12:41:01
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - recommend EV 4.11 as a prerequisite
+
+ - eg/yada-crawler.pl cleanup
+
+ - AE::N::C::Q::E header attribute readonly
+
+ - cleaned dependencies
+
+
+v0.039 2013-01-29T02:36:38
  [Stanislaw Pusep <creaktive@gmail.com>]
  - eg/yada-crawler.pl cleanup
 
@@ -412,19 +423,5 @@ v0.013 2012-03-21T20:23:37
  - benchmark update
 
  - Moose => Any::Moose
-
-
-v0.012 2012-02-01T16:33:34
- [Stanislaw Pusep <creaktive@gmail.com>]
- - "Attempt to free unreferenced scalar: SV 0xdeadbeef." warning was not
-   Test::HTTP::Server's fault in 01-net-curl-compatibility.t, at all.
-
- - Changes
-
-
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - AENCQ object now reusable
-
- - fixed kwalitee test due to new Parse::RecDescent release
 
 
