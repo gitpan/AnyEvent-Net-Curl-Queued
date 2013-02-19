@@ -1,6 +1,15 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.040 2013-02-04T12:41:01
+0.041 2013-02-19T11:11:41
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - removed dead reload code
+
+ - t/70-timeout.t seems OK now
+
+ - "use base" was broken
+
+
+v0.040 2013-02-03T16:20:20
  [Stanislaw Pusep <creaktive@gmail.com>]
  - recommend EV 4.11 as a prerequisite
 

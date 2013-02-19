@@ -14,7 +14,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.040'; # VERSION
+our $VERSION = '0.041'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
@@ -210,12 +210,6 @@ sub wait {
 
     # reload
     $self->set_cv(AE::cv);
-    $self->set_multi(
-        AnyEvent::Net::Curl::Queued::Multi->new({
-            max         => $self->max,
-            timeout     => $self->timeout,
-        })
-    );
 
     return;
 }
@@ -238,7 +232,7 @@ AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::C
 
 =head1 VERSION
 
-version 0.040
+version 0.041
 
 =head1 SYNOPSIS
 

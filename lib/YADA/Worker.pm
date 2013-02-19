@@ -6,10 +6,14 @@ use strict;
 use utf8;
 use warnings qw(all);
 
-use base 'AnyEvent::Net::Curl::Queued::Easy';
+use Any::Moose;
+extends 'AnyEvent::Net::Curl::Queued::Easy';
 
-our $VERSION = '0.040'; # VERSION
+our $VERSION = '0.041'; # VERSION
 
+
+no Any::Moose;
+__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -25,7 +29,7 @@ YADA::Worker - "Yet Another Download Accelerator Worker": alias for AnyEvent::Ne
 
 =head1 VERSION
 
-version 0.040
+version 0.041
 
 =head1 DESCRIPTION
 
