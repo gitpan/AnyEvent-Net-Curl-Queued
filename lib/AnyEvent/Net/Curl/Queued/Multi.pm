@@ -1,5 +1,5 @@
 package AnyEvent::Net::Curl::Queued::Multi;
-# ABSTRACT: Net::Curl::Multi wrapped by Any::Moose
+# ABSTRACT: Net::Curl::Multi wrapped by Moo
 
 
 use strict;
@@ -8,8 +8,14 @@ use warnings qw(all);
 
 use AnyEvent;
 use Carp qw(confess);
-use Any::Moose;
-use Any::Moose qw(X::NonMoose);
+use Moo;
+use MooX::Types::MooseLike::Base qw(
+    HashRef
+    Int
+    Num
+    Object
+    Ref
+);
 use Net::Curl::Multi;
 use Scalar::Util qw(set_prototype);
 
@@ -21,21 +27,21 @@ set_prototype \&Net::Curl::Multi::add_handle    => undef;
 extends 'Net::Curl::Multi';
 
 
-has active      => (is => 'ro', isa => 'Int', default => -1, writer => 'set_active');
+has active      => (is => 'ro', isa => Int, default => sub { -1 }, writer => 'set_active');
 
 
-has pool        => (is => 'ro', isa => 'HashRef[Ref]', default => sub { {} });
+has pool        => (is => 'ro', isa => HashRef[Ref], default => sub { {} });
 
 
-has timer       => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer');
+has timer       => (is => 'ro', isa => Object, writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer');
 
 
-has max         => (is => 'ro', isa => 'Num', default => 4);
+has max         => (is => 'ro', isa => Num, default => sub { 4 });
 
 
-has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
+has timeout     => (is => 'ro', isa => Num, default => sub { 60.0 });
 
-our $VERSION = '0.041'; # VERSION
+our $VERSION = '0.042'; # VERSION
 
 
 sub BUILD {
@@ -174,9 +180,6 @@ around add_handle => sub {
 };
 
 
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
-
 1;
 
 __END__
@@ -187,11 +190,11 @@ __END__
 
 =head1 NAME
 
-AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Any::Moose
+AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Moo
 
 =head1 VERSION
 
-version 0.041
+version 0.042
 
 =head1 SYNOPSIS
 
@@ -202,9 +205,45 @@ version 0.041
         timeout => 30,
     });
 
+=head1 WARNING: GONE MOO!
+
+This module isn't using L<Any::Moose> anymore due to the announced deprecation status of that module.
+The switch to the L<Moo> is known to break modules that do C<extend 'AnyEvent::Net::Curl::Queued::Easy'> / C<extend 'YADA::Worker'>!
+To keep the compatibility, make sure that you are using L<MooseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Moose;
+    use MooseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or L<MouseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Mouse;
+    use MouseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or the L<Any::Moose> equivalent:
+
+    package YourSubclassingModule;
+    use Any::Moose;
+    use Any::Moose qw(X::NonMoose);
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+However, the recommended approach is to switch your subclassing module to L<Moo> altogether (you can use L<MooX::late> to smoothen the transition):
+
+    package YourSubclassingModule;
+    use Moo;
+    use MooX::late;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
 =head1 DESCRIPTION
 
-This module extends the L<Net::Curl::Multi> class through L<MooseX::NonMoose> and adds L<AnyEvent> handlers.
+This module extends the L<Net::Curl::Multi> class through L<Moo> and adds L<AnyEvent> handlers.
 
 =head1 ATTRIBUTES
 
@@ -256,7 +295,7 @@ L<AnyEvent::Net::Curl::Queued>
 
 =item *
 
-L<MooseX::NonMoose> / L<MouseX::NonMoose>
+L<Moo>
 
 =item *
 

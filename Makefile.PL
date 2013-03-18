@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Any::Moose wrapper for queued downloads via Net::Curl & AnyEvent",
+  "ABSTRACT" => "Moo wrapper for queued downloads via Net::Curl & AnyEvent",
   "AUTHOR" => "Stanislaw Pusep <stas\@sysd.org>",
   "BUILD_REQUIRES" => {
     "Test::Exception" => 0,
@@ -23,18 +23,15 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "AnyEvent::Net::Curl::Queued",
   "PREREQ_PM" => {
-    "Any::Moose" => 0,
     "AnyEvent" => 0,
     "HTTP::Response" => 0,
     "JSON" => 0,
-    "Mouse::Util::TypeConstraints" => 0,
-    "MouseX::NativeTraits" => 0,
-    "MouseX::NonMoose" => 0,
+    "Moo" => "1.001000",
+    "MooX::Types::MooseLike::Base" => 0,
     "Net::Curl" => "0.25",
-    "URI" => 0,
-    "autodie" => 0
+    "URI" => 0
   },
-  "VERSION" => "0.041",
+  "VERSION" => "0.042",
   "test" => {
     "TESTS" => "t/*.t"
   }

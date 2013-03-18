@@ -4,14 +4,15 @@ use utf8;
 use warnings qw(all);
 
 use Data::Dumper;
-use Any::Moose;
+use Moo;
+use MooX::Types::MooseLike::Base qw(Num);
 use Test::More;
 use Time::HiRes qw(time);
 
 extends 'AnyEvent::Net::Curl::Queued::Easy';
 
-has started => (is => 'rw', isa => 'Num', default => sub { time });
-has '+use_stats' => (default => 1);
+has started => (is => 'rw', isa => Num, default => sub { time });
+has '+use_stats' => (default => sub { 1 });
 
 around finish => sub {
     my ($class, $self, $result) = @_;
@@ -24,8 +25,5 @@ around finish => sub {
     diag Dumper $self->stats
         unless 0 + $result;
 };
-
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;

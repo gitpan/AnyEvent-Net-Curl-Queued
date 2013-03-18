@@ -1,9 +1,9 @@
 NAME
-    AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads
-    via Net::Curl & AnyEvent
+    AnyEvent::Net::Curl::Queued - Moo wrapper for queued downloads via
+    Net::Curl & AnyEvent
 
 VERSION
-    version 0.041
+    version 0.042
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -15,7 +15,7 @@ SYNOPSIS
         use warnings qw(all);
 
         use HTML::LinkExtor;
-        use Any::Moose;
+        use Moo;
 
         extends 'AnyEvent::Net::Curl::Queued::Easy';
 
@@ -45,9 +45,6 @@ SYNOPSIS
             }
         };
 
-        no Any::Moose;
-        __PACKAGE__->meta->make_immutable;
-
         1;
 
         package main;
@@ -62,6 +59,44 @@ SYNOPSIS
             CrawlApache->new('http://localhost/manual/')
         });
         $q->wait;
+
+WARNING: GONE MOO!
+    This module isn't using Any::Moose anymore due to the announced
+    deprecation status of that module. The switch to the Moo is known to
+    break modules that do "extend 'AnyEvent::Net::Curl::Queued::Easy'" /
+    "extend 'YADA::Worker'"! To keep the compatibility, make sure that you
+    are using MooseX::NonMoose:
+
+        package YourSubclassingModule;
+        use Moose;
+        use MooseX::NonMoose;
+        extends 'AnyEvent::Net::Curl::Queued::Easy';
+        ...
+
+    Or MouseX::NonMoose:
+
+        package YourSubclassingModule;
+        use Mouse;
+        use MouseX::NonMoose;
+        extends 'AnyEvent::Net::Curl::Queued::Easy';
+        ...
+
+    Or the Any::Moose equivalent:
+
+        package YourSubclassingModule;
+        use Any::Moose;
+        use Any::Moose qw(X::NonMoose);
+        extends 'AnyEvent::Net::Curl::Queued::Easy';
+        ...
+
+    However, the recommended approach is to switch your subclassing module
+    to Moo altogether (you can use MooX::late to smoothen the transition):
+
+        package YourSubclassingModule;
+        use Moo;
+        use MooX::late;
+        extends 'AnyEvent::Net::Curl::Queued::Easy';
+        ...
 
 DESCRIPTION
     AnyEvent::Net::Curl::Queued (a.k.a. YADA, *Yet Another Download
@@ -95,11 +130,7 @@ DESCRIPTION
         WWW::Curl);
 
     *   AnyEvent: the DBI of event loops. Net::Curl also provides a nice and
-        well-documented example of AnyEvent usage (03-multi-event.pl);
-
-    *   MooseX::NonMoose: Net::Curl uses a Pure-Perl object implementation,
-        which is lightweight, but a bit messy for my Moose-based projects.
-        MooseX::NonMoose patches this gap.
+        well-documented example of AnyEvent usage (03-multi-event.pl).
 
     AnyEvent::Net::Curl::Queued is a glue module to wrap it all together. It
     offers no callbacks and (almost) no default handlers. It's up to you to
@@ -266,6 +297,9 @@ ATTRIBUTES
     sockets.
 
 METHODS
+  inc_completed
+    Increment the "completed" counter.
+
   start()
     Populate empty request slots with workers from the queue.
 
@@ -278,7 +312,7 @@ METHODS
   append($worker)
     Put the worker (instance of AnyEvent::Net::Curl::Queued::Easy) at the
     end of the queue. For lazy initialization, wrap the worker in a "sub {
-    ... }", the same way you do with the Moose "default => sub { ... }":
+    ... }", the same way you do with the Moo "default => sub { ... }":
 
         $queue->append(sub {
             AnyEvent::Net::Curl::Queued::Easy->new({ initial_url => 'http://.../' })
@@ -287,7 +321,7 @@ METHODS
   prepend($worker)
     Put the worker (instance of AnyEvent::Net::Curl::Queued::Easy) at the
     beginning of the queue. For lazy initialization, wrap the worker in a
-    "sub { ... }", the same way you do with the Moose "default => sub { ...
+    "sub { ... }", the same way you do with the Moo "default => sub { ...
     }":
 
         $queue->prepend(sub {
@@ -308,7 +342,7 @@ CAVEAT
 SEE ALSO
     *   AnyEvent
 
-    *   Any::Moose
+    *   Moo
 
     *   Net::Curl
 

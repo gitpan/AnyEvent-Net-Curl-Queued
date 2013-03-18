@@ -9,19 +9,20 @@ use warnings qw(all);
 
 use AnyEvent;
 use Carp qw(confess);
-use Any::Moose;
+use Moo;
+use MooX::Types::MooseLike::Base qw(HashRef Num);
 
 use AnyEvent::Net::Curl::Const;
 
-our $VERSION = '0.041'; # VERSION
+our $VERSION = '0.042'; # VERSION
 
 
-has stamp       => (is => 'ro', isa => 'Num', default => sub { AE::time }, writer => 'set_stamp');
+has stamp       => (is => 'ro', isa => Num, default => sub { AE::time }, writer => 'set_stamp');
 
 
 has stats       => (
     is          => 'ro',
-    isa         => 'HashRef[Num]',
+    isa         => HashRef[Num],
     default     => sub { {
         appconnect_time     => 0,
         connect_time        => 0,
@@ -65,9 +66,6 @@ sub sum {
 }
 
 
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
-
 1;
 
 __END__
@@ -82,7 +80,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.041
+version 0.042
 
 =head1 SYNOPSIS
 
@@ -96,6 +94,42 @@ version 0.041
     p $q->stats;
 
     $q->stats->sum(AnyEvent::Net::Curl::Queued::Stats->new);
+
+=head1 WARNING: GONE MOO!
+
+This module isn't using L<Any::Moose> anymore due to the announced deprecation status of that module.
+The switch to the L<Moo> is known to break modules that do C<extend 'AnyEvent::Net::Curl::Queued::Easy'> / C<extend 'YADA::Worker'>!
+To keep the compatibility, make sure that you are using L<MooseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Moose;
+    use MooseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or L<MouseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Mouse;
+    use MouseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or the L<Any::Moose> equivalent:
+
+    package YourSubclassingModule;
+    use Any::Moose;
+    use Any::Moose qw(X::NonMoose);
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+However, the recommended approach is to switch your subclassing module to L<Moo> altogether (you can use L<MooX::late> to smoothen the transition):
+
+    package YourSubclassingModule;
+    use Moo;
+    use MooX::late;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
 
 =head1 DESCRIPTION
 

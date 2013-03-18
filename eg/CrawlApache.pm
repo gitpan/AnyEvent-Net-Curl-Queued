@@ -4,14 +4,15 @@ use utf8;
 use warnings qw(all);
 use feature qw(say);
 
-use Any::Moose;
+use Moo;
+use MooX::Types::MooseLike::Base qw(InstanceOf);
 use Web::Scraper::LibXML;
 
 extends 'YADA::Worker';
 
 has scrap => (
     is      => 'ro',
-    isa     => 'Web::Scraper',
+    isa     => InstanceOf['Web::Scraper'],
     default => sub {
         scraper {
             process q(//a),
@@ -21,7 +22,7 @@ has scrap => (
     lazy    => 1,
 );
 
-has '+use_stats' => (default => 1);
+has '+use_stats' => (default => sub { 1 });
 
 after finish => sub {
     my ($self, $result) = @_;
@@ -53,8 +54,5 @@ after finish => sub {
         }
     }
 };
-
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;

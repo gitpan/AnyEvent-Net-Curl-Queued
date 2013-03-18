@@ -3,12 +3,13 @@ use strict;
 use utf8;
 use warnings qw(all);
 
-use Any::Moose;
+use Moo;
+use MooX::Types::MooseLike::Base qw(CodeRef Str);
 use Net::Curl::Easy qw(/^CURLOPT_/);
 
 extends 'AnyEvent::Net::Curl::Queued::Easy';
 
-has cb      => (is => 'ro', isa => 'CodeRef', required => 1);
+has cb      => (is => 'ro', isa => CodeRef, required => 1);
 
 after finish => sub {
     my ($self, $result) = @_;
@@ -36,8 +37,5 @@ after finish => sub {
 
     $self->cb->(@_);
 };
-
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;

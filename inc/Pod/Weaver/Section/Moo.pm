@@ -1,35 +1,19 @@
-package YADA::Worker;
-# ABSTRACT: "Yet Another Download Accelerator Worker": alias for AnyEvent::Net::Curl::Queued::Easy
+package inc::Pod::Weaver::Section::Moo;
 
+use Moose;
+with 'Pod::Weaver::Role::Section';
 
-use strict;
-use utf8;
-use warnings qw(all);
+sub weave_section {
+    my ($self, $document, $input) = @_;
 
-use Moo;
-extends 'AnyEvent::Net::Curl::Queued::Easy';
-
-our $VERSION = '0.042'; # VERSION
-
-
-1;
-
-__END__
-
-=pod
-
-=encoding utf8
-
-=head1 NAME
-
-YADA::Worker - "Yet Another Download Accelerator Worker": alias for AnyEvent::Net::Curl::Queued::Easy
-
-=head1 VERSION
-
-version 0.042
-
-=head1 WARNING: GONE MOO!
-
+    my @children;
+    for my $section (@{$document->children}) {
+        if ($section->content eq 'DESCRIPTION') {
+            push @children  => Pod::Elemental::Element::Nested->new({
+                command     => 'head1',
+                content     => 'WARNING: GONE MOO!',
+                children    => [
+                    Pod::Elemental::Element::Pod5::Ordinary->new({ content => << 'MOO_SECTION' }),
 This module isn't using L<Any::Moose> anymore due to the announced deprecation status of that module.
 The switch to the L<Moo> is known to break modules that do C<extend 'AnyEvent::Net::Curl::Queued::Easy'> / C<extend 'YADA::Worker'>!
 To keep the compatibility, make sure that you are using L<MooseX::NonMoose>:
@@ -63,38 +47,18 @@ However, the recommended approach is to switch your subclassing module to L<Moo>
     use MooX::late;
     extends 'AnyEvent::Net::Curl::Queued::Easy';
     ...
+MOO_SECTION
+                ],
+            });
+        }
+        push @children => $section;
+    }
+    $document->children(\@children);
 
-=head1 DESCRIPTION
+    return;
+}
 
-Exactly the same thing as L<AnyEvent::Net::Curl::Queued::Easy>, however, with a more Perl-ish and shorter name.
+no Moose;
+1;
 
-=head1 SEE ALSO
-
-=over 4
-
-=item *
-
-L<AnyEvent::Net::Curl::Queued>
-
-=item *
-
-L<AnyEvent::Net::Curl::Queued::Easy>
-
-=item *
-
-L<YADA>
-
-=back
-
-=head1 AUTHOR
-
-Stanislaw Pusep <stas@sysd.org>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2013 by Stanislaw Pusep.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
+__DATA__

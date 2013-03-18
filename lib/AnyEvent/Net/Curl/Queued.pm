@@ -1,5 +1,5 @@
 package AnyEvent::Net::Curl::Queued;
-# ABSTRACT: Any::Moose wrapper for queued downloads via Net::Curl & AnyEvent
+# ABSTRACT: Moo wrapper for queued downloads via Net::Curl & AnyEvent
 
 
 use strict;
@@ -7,55 +7,72 @@ use utf8;
 use warnings qw(all);
 
 use AnyEvent;
-use Any::Moose;
-use Any::Moose qw(::Util::TypeConstraints);
 use Carp qw(confess);
+use Moo;
+use MooX::Types::MooseLike::Base qw(
+    ArrayRef
+    Bool
+    HashRef
+    InstanceOf
+    Int
+    Num
+    Object
+    Str
+    is_Int
+);
 use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.041'; # VERSION
+our $VERSION = '0.042'; # VERSION
 
 
-has allow_dups  => (is => 'ro', isa => 'Bool', default => 0);
+has allow_dups  => (is => 'ro', isa => Bool, default => sub { 0 });
 
 
-has common_opts => (is => 'ro', isa => 'HashRef', default => sub { {} });
+has common_opts => (is => 'ro', isa => HashRef, default => sub { {} });
 
 
-has http_response => (is => 'ro', isa => 'Bool', default => 0);
+has http_response => (is => 'ro', isa => Bool, default => sub { 0 });
 
 
 has completed  => (
-    traits      => ['Counter'],
     is          => 'ro',
-    isa         => 'Int',
-    default     => 0,
-    handles     => {qw{
-        inc_completed inc
-    }},
+    isa         => Int,
+    default     => sub { 0 },
+    writer      => 'set_completed',
+);
+
+sub inc_completed {
+    my ($self) = @_;
+    return $self->set_completed($self->completed + 1);
+}
+
+
+has cv          => (is => 'ro', isa => Object, default => sub { AE::cv }, lazy => 1, writer => 'set_cv');
+
+
+has max         => (
+    is          => 'rw',
+    isa         => Int,
+    coerce      => sub {
+        confess 'At least 1 connection required'
+            if not is_Int($_[0])
+            or $_[0] < 1;
+        return $_[0];
+    },
+    default     => sub { 4 },
 );
 
 
-has cv          => (is => 'ro', isa => 'Maybe[Ref]', default => sub { AE::cv }, lazy => 1, writer => 'set_cv');
-
-
-subtype 'MaxConn'
-    => as Int
-    => where { $_ >= 1 };
-has max         => (is => 'rw', isa => 'MaxConn', default => 4);
-
-
-has multi       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Multi', writer => 'set_multi');
+has multi       => (is => 'ro', isa => InstanceOf['AnyEvent::Net::Curl::Queued::Multi'], writer => 'set_multi');
 
 
 has queue       => (
     is          => 'ro',
-    isa         => 'ArrayRef[Any]',
+    isa         => ArrayRef[Object],
     default     => sub { [] },
 );
-
-# Mouse traits are utterly broken!!!
 
 ## no critic (RequireArgUnpacking)
 
@@ -67,22 +84,22 @@ sub count           { return 0 + @{shift->queue} }
 
 has share       => (
     is      => 'ro',
-    isa     => 'Net::Curl::Share',
+    isa     => InstanceOf['Net::Curl::Share'],
     default => sub { Net::Curl::Share->new({ stamp => time }) },
     lazy    => 1,
 );
 
 
-has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
+has stats       => (is => 'ro', isa => InstanceOf['AnyEvent::Net::Curl::Queued::Stats'], default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
 
 
-has timeout     => (is => 'ro', isa => 'Num', default => 60.0);
+has timeout     => (is => 'ro', isa => Num, default => sub { 60.0 });
 
 
-has unique      => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
+has unique      => (is => 'ro', isa => HashRef[Str], default => sub { {} });
 
 
-has watchdog    => (is => 'ro', isa => 'Maybe[Ref]', writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog');
+has watchdog    => (is => 'ro', isa => Object, writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog');
 
 
 sub BUILD {
@@ -215,9 +232,6 @@ sub wait {
 }
 
 
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
-
 1;
 
 __END__
@@ -228,11 +242,11 @@ __END__
 
 =head1 NAME
 
-AnyEvent::Net::Curl::Queued - Any::Moose wrapper for queued downloads via Net::Curl & AnyEvent
+AnyEvent::Net::Curl::Queued - Moo wrapper for queued downloads via Net::Curl & AnyEvent
 
 =head1 VERSION
 
-version 0.041
+version 0.042
 
 =head1 SYNOPSIS
 
@@ -245,7 +259,7 @@ version 0.041
     use warnings qw(all);
 
     use HTML::LinkExtor;
-    use Any::Moose;
+    use Moo;
 
     extends 'AnyEvent::Net::Curl::Queued::Easy';
 
@@ -275,9 +289,6 @@ version 0.041
         }
     };
 
-    no Any::Moose;
-    __PACKAGE__->meta->make_immutable;
-
     1;
 
     package main;
@@ -292,6 +303,42 @@ version 0.041
         CrawlApache->new('http://localhost/manual/')
     });
     $q->wait;
+
+=head1 WARNING: GONE MOO!
+
+This module isn't using L<Any::Moose> anymore due to the announced deprecation status of that module.
+The switch to the L<Moo> is known to break modules that do C<extend 'AnyEvent::Net::Curl::Queued::Easy'> / C<extend 'YADA::Worker'>!
+To keep the compatibility, make sure that you are using L<MooseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Moose;
+    use MooseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or L<MouseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Mouse;
+    use MouseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or the L<Any::Moose> equivalent:
+
+    package YourSubclassingModule;
+    use Any::Moose;
+    use Any::Moose qw(X::NonMoose);
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+However, the recommended approach is to switch your subclassing module to L<Moo> altogether (you can use L<MooX::late> to smoothen the transition):
+
+    package YourSubclassingModule;
+    use Moo;
+    use MooX::late;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
 
 =head1 DESCRIPTION
 
@@ -334,11 +381,7 @@ L<Net::Curl>: Perl interface to the all-mighty L<libcurl|http://curl.haxx.se/lib
 
 =item *
 
-L<AnyEvent>: the L<DBI> of event loops. L<Net::Curl> also provides a nice and well-documented example of L<AnyEvent> usage (L<03-multi-event.pl|Net::Curl::examples/Multi::Event>);
-
-=item *
-
-L<MooseX::NonMoose>: L<Net::Curl> uses a Pure-Perl object implementation, which is lightweight, but a bit messy for my L<Moose>-based projects. L<MooseX::NonMoose> patches this gap.
+L<AnyEvent>: the L<DBI> of event loops. L<Net::Curl> also provides a nice and well-documented example of L<AnyEvent> usage (L<03-multi-event.pl|Net::Curl::examples/Multi::Event>).
 
 =back
 
@@ -533,6 +576,10 @@ The last resort against the non-deterministic chaos of evil lurking sockets.
 
 =head1 METHODS
 
+=head2 inc_completed
+
+Increment the L</completed> counter.
+
 =head2 start()
 
 Populate empty request slots with workers from the queue.
@@ -548,7 +595,7 @@ Activate a worker.
 =head2 append($worker)
 
 Put the worker (instance of L<AnyEvent::Net::Curl::Queued::Easy>) at the end of the queue.
-For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you do with the L<Moose> C<default =E<gt> sub { ... }>:
+For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you do with the L<Moo> C<default =E<gt> sub { ... }>:
 
     $queue->append(sub {
         AnyEvent::Net::Curl::Queued::Easy->new({ initial_url => 'http://.../' })
@@ -557,7 +604,7 @@ For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you d
 =head2 prepend($worker)
 
 Put the worker (instance of L<AnyEvent::Net::Curl::Queued::Easy>) at the beginning of the queue.
-For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you do with the L<Moose> C<default =E<gt> sub { ... }>:
+For lazy initialization, wrap the worker in a C<sub { ... }>, the same way you do with the L<Moo> C<default =E<gt> sub { ... }>:
 
     $queue->prepend(sub {
         AnyEvent::Net::Curl::Queued::Easy->new({ initial_url => 'http://.../' })
@@ -590,7 +637,7 @@ L<AnyEvent>
 
 =item *
 
-L<Any::Moose>
+L<Moo>
 
 =item *
 

@@ -1,6 +1,30 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.041 2013-02-19T11:11:41
+0.042 2013-03-18T14:43:51
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - typo fix
+
+ - BROKEN COMPATIBILITY: added the "WARNING: GONE MOO!" POD section
+   *everywhere*
+
+ - removing further Mo[ou]se references from documentation
+
+ - scope fix
+
+ - dependency updates
+
+ - --MooX::late
+
+ - Zilled the Dist
+
+ - more Any::Moose removal
+
+ - Fixed FIXMEs
+
+ - Moo-sification: take two
+
+
+v0.041 2013-02-18T21:48:46
  [Stanislaw Pusep <creaktive@gmail.com>]
  - removed dead reload code
 

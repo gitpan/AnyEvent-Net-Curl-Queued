@@ -1,5 +1,5 @@
 package AnyEvent::Net::Curl::Queued::Easy;
-# ABSTRACT: Net::Curl::Easy wrapped by Any::Moose
+# ABSTRACT: Net::Curl::Easy wrapped by Moo
 
 
 use strict;
@@ -13,9 +13,18 @@ use Digest::SHA;
 use Encode;
 use HTTP::Response;
 use JSON;
-use Any::Moose;
-use Any::Moose qw(::Util::TypeConstraints);
-use Any::Moose qw(X::NonMoose);
+use Moo;
+use MooX::Types::MooseLike::Base qw(
+    AnyOf
+    Bool
+    CodeRef
+    HashRef
+    InstanceOf
+    Int
+    Object
+    ScalarRef
+    Str
+);
 use Scalar::Util qw(set_prototype);
 use URI;
 
@@ -29,79 +38,76 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.041'; # VERSION
+our $VERSION = '0.042'; # VERSION
 
 has json        => (
     is          => 'ro',
-    isa         => 'JSON',
+    isa         => InstanceOf['JSON'],
     default     => sub { JSON->new->utf8->allow_blessed->convert_blessed },
     lazy        => 1,
 );
 
-subtype 'QueueType'
-    => as 'Object'
-    => where {
-        $_->isa('AnyEvent::Net::Curl::Queued')
-            or
-        $_->isa('YADA')
-    };
 
-subtype 'AnyEvent::Net::Curl::Queued::Easy::URI'
-    => as class_type('URI');
-
-coerce 'AnyEvent::Net::Curl::Queued::Easy::URI'
-    => from 'Any'
-        => via { URI->new("$_") }
-    => from 'URI'
-        => via { $_ };
+has curl_result => (is => 'ro', isa => Object, writer => 'set_curl_result');
 
 
-has curl_result => (is => 'ro', isa => 'Net::Curl::Easy::Code', writer => 'set_curl_result');
+has data        => (is => 'ro', isa => ScalarRef, writer => 'set_data');
 
 
-has data        => (is => 'ro', isa => 'ScalarRef', writer => 'set_data');
+has force       => (is => 'ro', isa => Bool, default => sub { 0 });
 
 
-has force       => (is => 'ro', isa => 'Bool', default => 0);
+has header      => (is => 'ro', isa => ScalarRef, writer => 'set_header');
 
 
-has header      => (is => 'ro', isa => 'ScalarRef', writer => 'set_header');
+has _autodecoded => (is => 'rw', isa => Bool, default => sub { 0 });
+has http_response => (is => 'ro', isa => Bool, default => sub { 0 }, writer => 'set_http_response');
 
 
-has _autodecoded => (is => 'rw', isa => 'Bool', default => 0);
-has http_response => (is => 'ro', isa => 'Bool', default => 0, writer => 'set_http_response');
+has post_content => (is => 'ro', isa => Str, default => sub { '' }, writer => 'set_post_content');
 
 
-has post_content => (is => 'ro', isa => 'Str', default => '', writer => 'set_post_content');
+sub _URI_type {
+    my $uri = shift;
+    return $uri->isa('URI')
+        ? $uri
+        : URI->new(q...$uri)
+}
+
+has initial_url => (is => 'ro', isa => InstanceOf['URI'], coerce => \&_URI_type, required => 1);
 
 
-has initial_url => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI', coerce => 1, required => 1);
+has final_url   => (is => 'ro', isa => InstanceOf['URI'], coerce => \&_URI_type, writer => 'set_final_url');
 
 
-has final_url   => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Easy::URI', coerce => 1, writer => 'set_final_url');
+has opts        => (is => 'ro', isa => HashRef, default => sub { {} });
 
 
-has opts        => (is => 'ro', isa => 'HashRef', default => sub { {} });
+has queue       => (
+    is          => 'rw',
+    isa         => AnyOf[
+        InstanceOf['AnyEvent::Net::Curl::Queued'],
+        InstanceOf['YADA'],
+    ],
+    weak_ref    => 1,
+);
 
 
-has queue       => (is => 'rw', isa => 'QueueType', weak_ref => 1);
+has sha         => (is => 'ro', isa => InstanceOf['Digest::SHA'], default => sub { Digest::SHA->new(256) }, lazy => 1);
 
 
-has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { Digest::SHA->new(256) }, lazy => 1);
-
-
-has response    => (is => 'ro', isa => 'HTTP::Response', writer => 'set_response');
+has response    => (is => 'ro', isa => InstanceOf['HTTP::Response'], writer => 'set_response');
 sub res { my ($self, @args) = @_; return $self->response(@args) }
 
 
-has retry       => (is => 'ro', isa => 'Int', default => 10);
+has retry       => (is => 'ro', isa => Int, default => sub { 10 });
 
 
-has stats       => (is => 'ro', isa => 'AnyEvent::Net::Curl::Queued::Stats', default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
-has use_stats   => (is => 'ro', isa => 'Bool', default => 0);
+has stats       => (is => 'ro', isa => InstanceOf['AnyEvent::Net::Curl::Queued::Stats'], default => sub { AnyEvent::Net::Curl::Queued::Stats->new }, lazy => 1);
+has use_stats   => (is => 'ro', isa => Bool, default => sub { 0 });
 
 
-has [qw(on_init on_finish)] => (is => 'ro', isa => 'CodeRef');
+has [qw(on_init on_finish)] => (is => 'ro', isa => CodeRef);
 
 
 ## no critic (RequireArgUnpacking)
@@ -400,9 +406,6 @@ around getinfo => sub {
 };
 
 
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
-
 1;
 
 __END__
@@ -413,11 +416,11 @@ __END__
 
 =head1 NAME
 
-AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Any::Moose
+AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moo
 
 =head1 VERSION
 
-version 0.041
+version 0.042
 
 =head1 SYNOPSIS
 
@@ -426,7 +429,7 @@ version 0.041
     use utf8;
     use warnings qw(all);
 
-    use Any::Moose;
+    use Moo;
     use Net::Curl::Easy qw(/^CURLOPT_/);
 
     extends 'AnyEvent::Net::Curl::Queued::Easy';
@@ -458,10 +461,43 @@ version 0.041
         return 1 if $self->getinfo(Net::Curl::Easy::CURLINFO_RESPONSE_CODE) =~ m{^5[0-9]{2}$};
     };
 
-    no Any::Moose;
-    __PACKAGE__->meta->make_immutable;
-
     1;
+
+=head1 WARNING: GONE MOO!
+
+This module isn't using L<Any::Moose> anymore due to the announced deprecation status of that module.
+The switch to the L<Moo> is known to break modules that do C<extend 'AnyEvent::Net::Curl::Queued::Easy'> / C<extend 'YADA::Worker'>!
+To keep the compatibility, make sure that you are using L<MooseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Moose;
+    use MooseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or L<MouseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Mouse;
+    use MouseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or the L<Any::Moose> equivalent:
+
+    package YourSubclassingModule;
+    use Any::Moose;
+    use Any::Moose qw(X::NonMoose);
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+However, the recommended approach is to switch your subclassing module to L<Moo> altogether (you can use L<MooX::late> to smoothen the transition):
+
+    package YourSubclassingModule;
+    use Moo;
+    use MooX::late;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
 
 =head1 DESCRIPTION
 
@@ -650,7 +686,7 @@ Complete list of options: L<http://curl.haxx.se/libcurl/c/curl_easy_getinfo.html
 =head2 FOREIGNBUILDARGS
 
 Internal.
-Required for L<MooseX::NonMoose> to operate properly on C<new> parameters.
+Required for L<Moo> to operate properly on C<new> parameters.
 
 =for Pod::Coverage BUILDARGS
 res
@@ -661,11 +697,7 @@ res
 
 =item *
 
-L<Any::Moose>
-
-=item *
-
-L<MooseX::NonMoose> / L<MouseX::NonMoose>
+L<Moo>
 
 =item *
 

@@ -1,18 +1,18 @@
 #!/usr/bin/env perl
 # ABSTRACT: Yet Another Download Accelerator CLI wrapper
 # PODNAME: yada
-use autodie;
 use strict;
 use utf8;
 use warnings qw(all);
 
 use Config;
+use Fcntl;
 use File::Copy;
 use Getopt::Long;
 use Pod::Usage;
 use YADA;
 
-our $VERSION = '0.041'; # VERSION
+our $VERSION = '0.042'; # VERSION
 
 
 GetOptions(
@@ -53,8 +53,10 @@ for my $url (@urls) {
 
                 $name = get_filename($self->initial_url);
 
-                ## no critic (RequireBriefOpen)
-                open($fh, q(>:raw), $name);
+                # will die() later
+                sysopen($fh, $name, O_CREAT | O_NONBLOCK | O_WRONLY);
+                binmode $fh;
+
                 $self->setopt(
                     encoding            => $encoding // q(),
                     followlocation      => $followlocation // 1,
@@ -131,12 +133,48 @@ yada - Yet Another Download Accelerator CLI wrapper
 
 =head1 VERSION
 
-version 0.041
+version 0.042
 
 =head1 SYNOPSIS
 
     yada [options] URLs_file
     yada [options] < URLs_file
+
+=head1 WARNING: GONE MOO!
+
+This module isn't using L<Any::Moose> anymore due to the announced deprecation status of that module.
+The switch to the L<Moo> is known to break modules that do C<extend 'AnyEvent::Net::Curl::Queued::Easy'> / C<extend 'YADA::Worker'>!
+To keep the compatibility, make sure that you are using L<MooseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Moose;
+    use MooseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or L<MouseX::NonMoose>:
+
+    package YourSubclassingModule;
+    use Mouse;
+    use MouseX::NonMoose;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+Or the L<Any::Moose> equivalent:
+
+    package YourSubclassingModule;
+    use Any::Moose;
+    use Any::Moose qw(X::NonMoose);
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
+
+However, the recommended approach is to switch your subclassing module to L<Moo> altogether (you can use L<MooX::late> to smoothen the transition):
+
+    package YourSubclassingModule;
+    use Moo;
+    use MooX::late;
+    extends 'AnyEvent::Net::Curl::Queued::Easy';
+    ...
 
 =head1 DESCRIPTION
 
