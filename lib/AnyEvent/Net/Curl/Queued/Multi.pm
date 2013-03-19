@@ -10,6 +10,8 @@ use AnyEvent;
 use Carp qw(confess);
 use Moo;
 use MooX::Types::MooseLike::Base qw(
+    AnyOf
+    ArrayRef
     HashRef
     Int
     Num
@@ -33,7 +35,7 @@ has active      => (is => 'ro', isa => Int, default => sub { -1 }, writer => 'se
 has pool        => (is => 'ro', isa => HashRef[Ref], default => sub { {} });
 
 
-has timer       => (is => 'ro', isa => Object, writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer');
+has timer       => (is => 'ro', isa => AnyOf[ArrayRef, Object], writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer');
 
 
 has max         => (is => 'ro', isa => Num, default => sub { 4 });
@@ -41,7 +43,7 @@ has max         => (is => 'ro', isa => Num, default => sub { 4 });
 
 has timeout     => (is => 'ro', isa => Num, default => sub { 60.0 });
 
-our $VERSION = '0.042'; # VERSION
+our $VERSION = '0.043'; # VERSION
 
 
 sub BUILD {
@@ -194,7 +196,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Moo
 
 =head1 VERSION
 
-version 0.042
+version 0.043
 
 =head1 SYNOPSIS
 

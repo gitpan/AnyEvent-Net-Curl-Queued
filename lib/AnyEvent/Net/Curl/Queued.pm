@@ -10,6 +10,7 @@ use AnyEvent;
 use Carp qw(confess);
 use Moo;
 use MooX::Types::MooseLike::Base qw(
+    AnyOf
     ArrayRef
     Bool
     HashRef
@@ -24,7 +25,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.042'; # VERSION
+our $VERSION = '0.043'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => Bool, default => sub { 0 });
@@ -99,7 +100,7 @@ has timeout     => (is => 'ro', isa => Num, default => sub { 60.0 });
 has unique      => (is => 'ro', isa => HashRef[Str], default => sub { {} });
 
 
-has watchdog    => (is => 'ro', isa => Object, writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog');
+has watchdog    => (is => 'ro', isa => AnyOf[ArrayRef, Object], writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog');
 
 
 sub BUILD {
@@ -246,7 +247,7 @@ AnyEvent::Net::Curl::Queued - Moo wrapper for queued downloads via Net::Curl & A
 
 =head1 VERSION
 
-version 0.042
+version 0.043
 
 =head1 SYNOPSIS
 

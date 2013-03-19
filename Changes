@@ -1,6 +1,13 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.042 2013-03-18T14:43:51
+0.043 2013-03-19T20:59:44
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - "AnyOf" usage requires MooX::Types::MooseLike >= 0.18
+
+ - fixed timers for AnyEvent::Impl::Perl
+
+
+v0.042 2013-03-18T14:35:07
  [Stanislaw Pusep <creaktive@gmail.com>]
  - typo fix
 

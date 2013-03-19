@@ -20,7 +20,7 @@ requires:
   HTTP::Response: 0
   JSON: 0
   Moo: 1.001000
-  MooX::Types::MooseLike::Base: 0
+  MooX::Types::MooseLike: 0.18
   Net::Curl: 0.25
   URI: 0
   perl: 5.010
@@ -28,4 +28,4 @@ resources:
   bugtracker: https://github.com/creaktive/AnyEvent-Net-Curl-Queued/issues
   homepage: https://github.com/creaktive/AnyEvent-Net-Curl-Queued
   repository: git://github.com/creaktive/AnyEvent-Net-Curl-Queued.git
-version: 0.042
+version: 0.043

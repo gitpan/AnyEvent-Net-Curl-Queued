@@ -14,7 +14,7 @@ use MooX::Types::MooseLike::Base qw(HashRef Num);
 
 use AnyEvent::Net::Curl::Const;
 
-our $VERSION = '0.042'; # VERSION
+our $VERSION = '0.043'; # VERSION
 
 
 has stamp       => (is => 'ro', isa => Num, default => sub { AE::time }, writer => 'set_stamp');
@@ -80,7 +80,7 @@ AnyEvent::Net::Curl::Queued::Stats - Connection statistics for AnyEvent::Net::Cu
 
 =head1 VERSION
 
-version 0.042
+version 0.043
 
 =head1 SYNOPSIS
 

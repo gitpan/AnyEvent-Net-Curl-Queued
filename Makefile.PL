@@ -27,11 +27,11 @@ my %WriteMakefileArgs = (
     "HTTP::Response" => 0,
     "JSON" => 0,
     "Moo" => "1.001000",
-    "MooX::Types::MooseLike::Base" => 0,
+    "MooX::Types::MooseLike" => "0.18",
     "Net::Curl" => "0.25",
     "URI" => 0
   },
-  "VERSION" => "0.042",
+  "VERSION" => "0.043",
   "test" => {
     "TESTS" => "t/*.t"
   }
