@@ -2,11 +2,10 @@ package YADA;
 # ABSTRACT: "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 
+use feature qw(switch);
 use strict;
 use utf8;
 use warnings qw(all);
-
-use feature qw(switch);
 
 use Moo;
 
@@ -14,7 +13,9 @@ extends 'AnyEvent::Net::Curl::Queued';
 
 use YADA::Worker;
 
-our $VERSION = '0.043'; # VERSION
+no if ($] >= 5.017010), warnings => q(experimental);
+
+our $VERSION = '0.044'; # VERSION
 
 # serious DWIMmery ahead!
 around qw(append prepend) => sub {
@@ -69,7 +70,7 @@ YADA - "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 =head1 VERSION
 
-version 0.043
+version 0.044
 
 =head1 SYNOPSIS
 

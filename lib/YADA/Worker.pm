@@ -9,7 +9,7 @@ use warnings qw(all);
 use Moo;
 extends 'AnyEvent::Net::Curl::Queued::Easy';
 
-our $VERSION = '0.043'; # VERSION
+our $VERSION = '0.044'; # VERSION
 
 
 1;
@@ -26,7 +26,7 @@ YADA::Worker - "Yet Another Download Accelerator Worker": alias for AnyEvent::Ne
 
 =head1 VERSION
 
-version 0.043
+version 0.044
 
 =head1 WARNING: GONE MOO!
 

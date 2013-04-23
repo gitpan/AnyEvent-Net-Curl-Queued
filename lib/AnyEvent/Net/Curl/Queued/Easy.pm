@@ -2,11 +2,10 @@ package AnyEvent::Net::Curl::Queued::Easy;
 # ABSTRACT: Net::Curl::Easy wrapped by Moo
 
 
+use feature qw(switch);
 use strict;
 use utf8;
 use warnings qw(all);
-
-use feature qw(switch);
 
 use Carp qw(carp confess);
 use Digest::SHA;
@@ -38,7 +37,9 @@ extends 'Net::Curl::Easy';
 use AnyEvent::Net::Curl::Const;
 use AnyEvent::Net::Curl::Queued::Stats;
 
-our $VERSION = '0.043'; # VERSION
+no if ($] >= 5.017010), warnings => q(experimental);
+
+our $VERSION = '0.044'; # VERSION
 
 has json        => (
     is          => 'ro',
@@ -420,7 +421,7 @@ AnyEvent::Net::Curl::Queued::Easy - Net::Curl::Easy wrapped by Moo
 
 =head1 VERSION
 
-version 0.043
+version 0.044
 
 =head1 SYNOPSIS
 

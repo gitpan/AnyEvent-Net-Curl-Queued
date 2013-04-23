@@ -1,6 +1,13 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.043 2013-03-19T20:59:44
+0.044 2013-04-23T01:02:47
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - AnyEvent timers are now weak_ref
+
+ - Perl v5.17.10 compatibility
+
+
+v0.043 2013-03-19T20:59:04
  [Stanislaw Pusep <creaktive@gmail.com>]
  - "AnyOf" usage requires MooX::Types::MooseLike >= 0.18
 
@@ -351,117 +358,5 @@ v0.020 2012-05-12T21:18:51
 
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - Changelog
-
-
-v0.019 2012-04-05T20:26:29
- [Stanislaw Pusep <creaktive@gmail.com>]
- - Changelog
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - version bump
-
- - fix for perl-5.15.9
-
-
-v0.018 2012-03-31T19:04:45
- [Stanislaw Pusep <creaktive@gmail.com>]
- - minor fixes
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - Changelog
-
-
-v0.017 2012-03-27T13:54:30
- [Stanislaw Pusep <creaktive@gmail.com>]
- - Changelog
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - ++yada options
-
- - yada: stupid typo fix
-
- - benchmark is flawed as YADA also can't tell initialization from fetching
-   apart :(
-
-
-v0.016 2012-03-25T21:46:55
- [Stanislaw Pusep <creaktive@gmail.com>]
- - yada: filename from content-disposition/location tags
-
- - better socket watcher recycling
-
- - benchmark now separates initialization from the download; using remote
-   server
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - yada: get_filename()
-
- - yada timeout parameter
-
- - --MooseX::NonMoose from dist.ini
-
- - verbose yada help
-
-
-v0.015 2012-03-23T15:34:09
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - ++yada CLI tool
-
- - all tests under Any::Moose
-
- - meta->class_precedence_list => meta->name
-
- - ++MooseX::NonMoose to dist.ini
-
- - eg/benchmark.pl: unsure about the way to use AnyEvent::Curl::Multi;
-   copied from Template::Parser::RemoteInclude
-
- - Changelog
-
-
-v0.014 2012-03-22T19:38:15
- [Stanislaw Pusep <creaktive@gmail.com>]
- - MouseX::NativeTraits dependency
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - README version bump
-
- - ++CURL_LOCK_DATA_SSL_SESSION
-
- - Changelog
-
-
-v0.013 2012-03-21T20:23:37
- [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
- - Changes
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - Replaced Moose by Any::Moose
-
- - benchmark update
-
- - documentation update
-
- - fixes
-
- - benchmark fix
-
- - cleanup test
-
- - uninitialization fixes
-
- - Mouse prereqs
-
- - BUILDARGS hack
-
- - benchmark update
-
- - Moose => Any::Moose
 
 
