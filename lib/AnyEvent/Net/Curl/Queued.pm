@@ -25,7 +25,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.044'; # VERSION
+our $VERSION = '0.045'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => Bool, default => sub { 0 });
@@ -100,7 +100,7 @@ has timeout     => (is => 'ro', isa => Num, default => sub { 60.0 });
 has unique      => (is => 'ro', isa => HashRef[Str], default => sub { {} });
 
 
-has watchdog    => (is => 'ro', isa => AnyOf[ArrayRef, Object], writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog', weak_ref => 1);
+has watchdog    => (is => 'ro', isa => AnyOf[ArrayRef, Object], writer => 'set_watchdog', clearer => 'clear_watchdog', predicate => 'has_watchdog', weak_ref => 0);
 
 
 sub BUILD {
@@ -247,7 +247,7 @@ AnyEvent::Net::Curl::Queued - Moo wrapper for queued downloads via Net::Curl & A
 
 =head1 VERSION
 
-version 0.044
+version 0.045
 
 =head1 SYNOPSIS
 

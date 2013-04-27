@@ -1,6 +1,11 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.044 2013-04-23T01:02:47
+0.045 2013-04-27T14:17:06
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - reverting #871313f1ed
+
+
+v0.044 2013-04-22T18:12:36
  [Stanislaw Pusep <creaktive@gmail.com>]
  - AnyEvent timers are now weak_ref
 

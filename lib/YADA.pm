@@ -15,7 +15,7 @@ use YADA::Worker;
 
 no if ($] >= 5.017010), warnings => q(experimental);
 
-our $VERSION = '0.044'; # VERSION
+our $VERSION = '0.045'; # VERSION
 
 # serious DWIMmery ahead!
 around qw(append prepend) => sub {
@@ -70,7 +70,7 @@ YADA - "Yet Another Download Accelerator": alias for AnyEvent::Net::Curl::Queued
 
 =head1 VERSION
 
-version 0.044
+version 0.045
 
 =head1 SYNOPSIS
 

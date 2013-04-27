@@ -35,7 +35,7 @@ has active      => (is => 'ro', isa => Int, default => sub { -1 }, writer => 'se
 has pool        => (is => 'ro', isa => HashRef[Ref], default => sub { {} });
 
 
-has timer       => (is => 'ro', isa => AnyOf[ArrayRef, Object], writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer', weak_ref => 1);
+has timer       => (is => 'ro', isa => AnyOf[ArrayRef, Object], writer => 'set_timer', clearer => 'clear_timer', predicate => 'has_timer', weak_ref => 0);
 
 
 has max         => (is => 'ro', isa => Num, default => sub { 4 });
@@ -43,7 +43,7 @@ has max         => (is => 'ro', isa => Num, default => sub { 4 });
 
 has timeout     => (is => 'ro', isa => Num, default => sub { 60.0 });
 
-our $VERSION = '0.044'; # VERSION
+our $VERSION = '0.045'; # VERSION
 
 
 sub BUILD {
@@ -196,7 +196,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Moo
 
 =head1 VERSION
 
-version 0.044
+version 0.045
 
 =head1 SYNOPSIS
 
