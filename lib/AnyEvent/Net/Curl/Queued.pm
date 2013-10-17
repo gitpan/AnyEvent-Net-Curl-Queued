@@ -25,7 +25,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.045'; # VERSION
+our $VERSION = '0.046'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => Bool, default => sub { 0 });
@@ -247,7 +247,7 @@ AnyEvent::Net::Curl::Queued - Moo wrapper for queued downloads via Net::Curl & A
 
 =head1 VERSION
 
-version 0.045
+version 0.046
 
 =head1 SYNOPSIS
 
@@ -434,7 +434,7 @@ L<AnyEvent::Curl::Multi>: queued parallel downloads via L<WWW::Curl>. Queues are
 
 =item *
 
-L<Parallel::Downloader>: queued parallel downloads via L<AnyEvent::HTTP>. Very fast and is pure-Perl (compiling event driver is optional). You only access results when the whole batch is done; so huge batches will require lots of RAM to store contents.
+L<Parallel::Downloader>: queued parallel downloads via L<AnyEvent::HTTP>. Very fast and is pure-Perl (compiling event driver is optional). No queue modification possible while batch is being processed.
 
 =back
 

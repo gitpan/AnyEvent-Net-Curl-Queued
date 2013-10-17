@@ -8,9 +8,22 @@ BEGIN {
 
 use strict;
 use warnings;
-use Test::More;
 
-eval 'use Test::NoTabs';
-plan skip_all => 'Test::NoTabs required' if $@;
+# this test was generated with Dist::Zilla::Plugin::NoTabsTests 0.05
 
-all_perl_files_ok();
+use Test::More 0.88;
+use Test::NoTabs;
+
+my @files = (
+    'bin/yada',
+    'lib/AnyEvent/Net/Curl/Const.pm',
+    'lib/AnyEvent/Net/Curl/Queued.pm',
+    'lib/AnyEvent/Net/Curl/Queued/Easy.pm',
+    'lib/AnyEvent/Net/Curl/Queued/Multi.pm',
+    'lib/AnyEvent/Net/Curl/Queued/Stats.pm',
+    'lib/YADA.pm',
+    'lib/YADA/Worker.pm'
+);
+
+notabs_ok($_) foreach @files;
+done_testing;

@@ -1,367 +1,122 @@
 Changelog for AnyEvent-Net-Curl-Queued
 
-0.045 2013-04-27T14:17:06
- [Stanislaw Pusep <creaktive@gmail.com>]
- - reverting #871313f1ed
+v0.046 2013-10-17T12:54:55
+ - saner YADA defaults [Stanislaw Pusep]
+ - YADA optimization for plain URL queues [Stanislaw Pusep]
+ - Merge pull request #3 from wchristian/patch-1
+   
+   remove ram comment about Parallel::Downloader [Stanislaw Pusep]
+ - remove ram comment about Parallel::Downloader
+   
+   Using the `build_response` one can pass in a sub that is intended to
+   build for each request the response emitted at the end of the batch. The
+   default build process involves storing the request and response in an
+   array, but can also store the response in a file and return a filename
+   instead of the response, or simply return nothing at all.
+   
+   The only real downside is that it's a one-shot tool. [Christian Walde]
+ - Fixed yet another test failing behind the proxy [Stanislaw Pusep]
 
+v0.045 2013-04-27T14:16:02
+ - reverting #871313f1ed [Stanislaw Pusep]
 
 v0.044 2013-04-22T18:12:36
- [Stanislaw Pusep <creaktive@gmail.com>]
- - AnyEvent timers are now weak_ref
-
- - Perl v5.17.10 compatibility
-
+ - AnyEvent timers are now weak_ref [Stanislaw Pusep]
+ - Perl v5.17.10 compatibility [Stanislaw Pusep]
 
 v0.043 2013-03-19T20:59:04
- [Stanislaw Pusep <creaktive@gmail.com>]
- - "AnyOf" usage requires MooX::Types::MooseLike >= 0.18
-
- - fixed timers for AnyEvent::Impl::Perl
-
+ - "AnyOf" usage requires MooX::Types::MooseLike >= 0.18 [Stanislaw Pusep]
+ - fixed timers for AnyEvent::Impl::Perl [Stanislaw Pusep]
 
 v0.042 2013-03-18T14:35:07
- [Stanislaw Pusep <creaktive@gmail.com>]
- - typo fix
-
+ - typo fix [Stanislaw Pusep]
  - BROKEN COMPATIBILITY: added the "WARNING: GONE MOO!" POD section
-   *everywhere*
-
- - removing further Mo[ou]se references from documentation
-
- - scope fix
-
- - dependency updates
-
- - --MooX::late
-
- - Zilled the Dist
-
- - more Any::Moose removal
-
- - Fixed FIXMEs
-
- - Moo-sification: take two
-
+   *everywhere* [Stanislaw Pusep]
+ - removing further Mo[ou]se references from documentation [Stanislaw
+   Pusep]
+ - scope fix [Stanislaw Pusep]
+ - dependency updates [Stanislaw Pusep]
+ - --MooX::late [Stanislaw Pusep]
+ - Zilled the Dist [Stanislaw Pusep]
+ - more Any::Moose removal [Stanislaw Pusep]
+ - Fixed FIXMEs [Stanislaw Pusep]
+ - Moo-sification: take two [Stanislaw Pusep]
 
 v0.041 2013-02-18T21:48:46
- [Stanislaw Pusep <creaktive@gmail.com>]
- - removed dead reload code
-
- - t/70-timeout.t seems OK now
-
- - "use base" was broken
-
+ - removed dead reload code [Stanislaw Pusep]
+ - t/70-timeout.t seems OK now [Stanislaw Pusep]
+ - "use base" was broken [Stanislaw Pusep]
 
 v0.040 2013-02-03T16:20:20
- [Stanislaw Pusep <creaktive@gmail.com>]
- - recommend EV 4.11 as a prerequisite
-
- - eg/yada-crawler.pl cleanup
-
- - AE::N::C::Q::E header attribute readonly
-
- - cleaned dependencies
-
+ - recommend EV 4.11 as a prerequisite [Stanislaw Pusep]
+ - eg/yada-crawler.pl cleanup [Stanislaw Pusep]
+ - AE::N::C::Q::E header attribute readonly [Stanislaw Pusep]
+ - cleaned dependencies [Stanislaw Pusep]
 
 v0.039 2013-01-29T02:36:38
- [Stanislaw Pusep <creaktive@gmail.com>]
- - eg/yada-crawler.pl cleanup
-
- - YADA cleanup
-
- - minor ::Multi accessor cleanup
-
- - eg/yada-crawler.pl: simplified parser initialization
-
- - fixed taskset(1) link
-
- - http_message handling revamped
-
- - added eg/yada-crawler.pl (not very clear example)
-
- - benchmark update
-
- - further benchmark normalization
-
- - disable compression in Mojo::UA benchmark
-
- - Mojo::UserAgent benchmark fixed (mea culpa)
-
- - t/73-cycle.t is an author test
-
+ - eg/yada-crawler.pl cleanup [Stanislaw Pusep]
+ - YADA cleanup [Stanislaw Pusep]
+ - minor ::Multi accessor cleanup [Stanislaw Pusep]
+ - eg/yada-crawler.pl: simplified parser initialization [Stanislaw Pusep]
+ - fixed taskset(1) link [Stanislaw Pusep]
+ - http_message handling revamped [Stanislaw Pusep]
+ - added eg/yada-crawler.pl (not very clear example) [Stanislaw Pusep]
+ - benchmark update [Stanislaw Pusep]
+ - further benchmark normalization [Stanislaw Pusep]
+ - disable compression in Mojo::UA benchmark [Stanislaw Pusep]
+ - Mojo::UserAgent benchmark fixed (mea culpa) [Stanislaw Pusep]
+ - t/73-cycle.t is an author test [Stanislaw Pusep]
 
 v0.038 2013-01-24T22:11:02
- [Stanislaw Pusep <creaktive@gmail.com>]
- - ooops, Mojo can't start/stop several times anymore?
-
- - Mojo::UserAgent benchmark overhaul
-
+ - ooops, Mojo can't start/stop several times anymore? [Stanislaw Pusep]
+ - Mojo::UserAgent benchmark overhaul [Stanislaw Pusep]
  - setting CURLOPT_POSTFIELDS to a HashRef converts to JSON automatically
-
- - removed useless eval check from AE::N::C::Const
-
- - useless meta->name removed
-
- - full perlcritic harsh compliance
-
- - calming down the perlcritic
-
- - Dist::Zilla bump
-
- - better traps for t/70-timeout.t
-
- - fragment supression tested
-
- - disabling Net::Curl::* prototypes
-
- - messing around
-
+   [Stanislaw Pusep]
+ - removed useless eval check from AE::N::C::Const [Stanislaw Pusep]
+ - useless meta->name removed [Stanislaw Pusep]
+ - full perlcritic harsh compliance [Stanislaw Pusep]
+ - calming down the perlcritic [Stanislaw Pusep]
+ - Dist::Zilla bump [Stanislaw Pusep]
+ - better traps for t/70-timeout.t [Stanislaw Pusep]
+ - fragment supression tested [Stanislaw Pusep]
+ - disabling Net::Curl::* prototypes [Stanislaw Pusep]
+ - messing around [Stanislaw Pusep]
 
 v0.037 2012-11-25T18:55:34
- [Stanislaw Pusep <creaktive@gmail.com>]
  - fixed encoding issues revealed by upgrading to Digest::SHA v5.74
-
- - postponing $cv->send to properly destroy ::Multi instance
-
- - followlocation-caused header propagation fix
-
+   [Stanislaw Pusep]
+ - postponing $cv->send to properly destroy ::Multi instance [Stanislaw
+   Pusep]
+ - followlocation-caused header propagation fix [Stanislaw Pusep]
 
 v0.036 2012-11-06T15:00:02
- [Stanislaw Pusep <creaktive@gmail.com>]
- - curly brackets cleanup
-
- - initialization exception testing
-
- - proper usage of BUILDARGS/FOREIGNBUILDARGS
-
- - fixing cyclic references
-
- - benchmark results update
-
- - less verbose recursion test
-
- - benchmark suite fixes
-
- - Test::Memory::Cycle test implemented
-
- - clearer benchmark reasoning
-
+ - curly brackets cleanup [Stanislaw Pusep]
+ - initialization exception testing [Stanislaw Pusep]
+ - proper usage of BUILDARGS/FOREIGNBUILDARGS [Stanislaw Pusep]
+ - fixing cyclic references [Stanislaw Pusep]
+ - benchmark results update [Stanislaw Pusep]
+ - less verbose recursion test [Stanislaw Pusep]
+ - benchmark suite fixes [Stanislaw Pusep]
+ - Test::Memory::Cycle test implemented [Stanislaw Pusep]
+ - clearer benchmark reasoning [Stanislaw Pusep]
  - major breakthrough in Net::Curl::*  "unreferenced scalar" fixing!
-
- - attempt to fight 1-millisecond timeout (again)
-
+   [Stanislaw Pusep]
+ - attempt to fight 1-millisecond timeout (again) [Stanislaw Pusep]
 
 v0.035 2012-10-22T18:49:04
- [Stanislaw Pusep <creaktive@gmail.com>]
  - Net::Curl::Share instance destruction code is FUBAR; storing it inside a
-   Mo[ou]se attribute was a really bad idea :~(
-
+   Mo[ou]se attribute was a really bad idea :~( [Stanislaw Pusep]
 
 v0.034 2012-10-22T12:46:49
- [Stanislaw Pusep <creaktive@gmail.com>]
- - weak_ref unnecessary, after all
-
- - removed unnecessary & broken weak_ref declarations
-
- - replaced time() from Time::HiRes by AE::tie
-
- - a bit less deterministic t/61-nest.t
-
+ - weak_ref unnecessary, after all [Stanislaw Pusep]
+ - removed unnecessary & broken weak_ref declarations [Stanislaw Pusep]
+ - replaced time() from Time::HiRes by AE::tie [Stanislaw Pusep]
+ - a bit less deterministic t/61-nest.t [Stanislaw Pusep]
 
 v0.033 2012-10-18T18:31:27
- [Stanislaw Pusep <creaktive@gmail.com>]
- - better compliance with libcurl docs
-
- - a bit cleaner Net::Curl::Share handling
-
- - very bad fix for Net::Curl::Share instance "weakness"
-
+ - better compliance with libcurl docs [Stanislaw Pusep]
+ - a bit cleaner Net::Curl::Share handling [Stanislaw Pusep]
+ - very bad fix for Net::Curl::Share instance "weakness" [Stanislaw Pusep]
  - getting rid of "Attempt to free unreferenced scalar: SV 0xdeadbeef
-   during global destruction."
-
-
-v0.032 2012-10-16T15:14:13
- [Stanislaw Pusep <creaktive@gmail.com>]
- - version bump
-
- - fix release: dependencies were stripped accidentally
-
-
-v0.031 2012-10-16T14:20:54
- [Stanislaw Pusep <creaktive@gmail.com>]
- - split Test::HTTP::AnyEvent::Server into a separate module
-
- - finally Test::HTTP::AnyEvent::Server can detach & run as separate
-   process
-
-
-v0.030 2012-10-11T22:31:11
- [Stanislaw Pusep <creaktive@gmail.com>]
- - YADA DWIM: documented & tested
-
- - updated test for nasty empty HTTP::Message condition
-
- - minor edge case condition adjustments
-
- - better Moose encapsulation
-
- - better type constraints
-
- - added common_opts to AE::N::C::Q and fixed CURLOPT_(SHARE|TIMEOUT)
-   propagation for YADA
-
-
-v0.029 2012-10-03T19:44:25
- [Stanislaw Pusep <creaktive@gmail.com>]
- - test fixes (no need to rely on cpan.org)
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - eg/simple.pl updated to show the new sugar syntax
-
- - do *NOT* return HTTP::Response if scheme is not HTTP/HTTPS
-
-
-v0.028 2012-09-26T19:52:31
- [Stanislaw Pusep <creaktive@gmail.com>]
- - minor compatibility fixes
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - attempt to fix FreeBSD test errors
-
- - YADA append()/prepend() are now chainable (updated example in SYNOPSIS)
-
- - experimental YADA DWIM extensions for append()/prepend()
-
- - added AE::N::C::Q::Easy->opts attribute to quickly setopt() stuff
-
- - more verbose environment info
-
- - benchmark results updated
-
- - update process name in eg/benchmark.pl
-
- - refactored eg/benchmark.pl
-
-
-v0.027 2012-09-11T04:54:09
- [Stanislaw Pusep <creaktive@gmail.com>]
- - test cloning
-
- - AE::N::C::Q::Easy->clone($param) fixed
-
- - fix: no socket_action(CURL_SOCKET_TIMEOUT) if no handles are open
-
- - reimplemented eg/benchmark/mojo.pl to work the non-blocking way
-
- - documentation update
-
- - implemented AnyEvent::HTTP::Tiny client to test
-   Test::HTTP::AnyEvent::Server
-
- - use Any::Moose for Test::HTTP::AnyEvent::Server
-
- - gave up, Test::HTTP::Server is more reliable for blocking tests
-
- - enhance Test::HTTP::AnyEvent::Server coverage
-
- - more failing tests
-
- - more AE::N::C::Easy cleanup
-
- - removed Test::HTTP::Server dependency (now for sure)
-
- - test incorrect usage of AE::N::C::Q::Easy setopt()/getinfo()
-
- - migrate N::C::Multi & N::C::Easy object capability checks into test
-
- - test boundaries fine-tuned
-
- - removed unmet conditions
-
- - test watchdog & timeout
-
- - clean up duplicate URL condition
-
- - removed Test::HTTP::Server dependency
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - benchmark updated
-
- - eg/queue: filtered URLs which lead to redirectors
-
- - implemented Test::HTTP::AnyEvent::Server, as fork() breaks Net::Curl :(
-
- - use AE::postpone instead of "instant timer" hack
-
-
-v0.026 2012-09-05T21:24:33
- [Stanislaw Pusep <creaktive@gmail.com>]
- - correctly reenqueue POST requests
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - updated t/42-loopback-retry.t to use internal POST retry mechanism
-
- - attempt double GET at t/30-queued-single.t (to verify queue
-   deduplication)
-
- - stripped dead code from AE::N::C::Q::Stats
-
- - fixed AE::N::C::Const cache typo
-
- - split queue accessors POD
-
- - Mojo::UserAgent benchmark
-
-
-v0.025 2012-07-27T18:08:19
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - benchmark fixed
-
- - removed Memoize dependency
-
-
-v0.024 2012-07-23T19:22:24
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - squash setopt calls during init into one
-
- - Trait::Array is too slow to handle huge queues
-
-
-v0.023 2012-07-20T19:35:04
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - automatically POST as JSON
-
-
-v0.022 2012-07-04T18:54:54
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - raise CURLMOPT_MAXCONNECTS
-
- - example fixes
-
- - eg/CrawlApache.pm using Web::Scraper
-
-
-v0.021 2012-05-21T17:18:08
- [Stanislaw Pusep <creaktive@gmail.com>]
- - Changes
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - removed common::sense
-
- - using ChangelogFromGit::CPAN::Changes for changelog
-
-
-v0.020 2012-05-12T21:18:51
- [Stanislaw Pusep <creaktive@gmail.com>]
- - documentation updated with alternatives; prereq common::sense 3.5
-
-
- [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
- - Changelog
-
+   during global destruction." [Stanislaw Pusep]
 

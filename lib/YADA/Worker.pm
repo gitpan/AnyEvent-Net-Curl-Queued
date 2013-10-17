@@ -9,7 +9,13 @@ use warnings qw(all);
 use Moo;
 extends 'AnyEvent::Net::Curl::Queued::Easy';
 
-our $VERSION = '0.045'; # VERSION
+our $VERSION = '0.046'; # VERSION
+
+has '+opts' => (default => sub { { encoding => '', maxredirs => 5 } });
+
+## no critic (ProtectPrivateSubs)
+after init  => sub { shift->setopt(followlocation => 1) };
+after finish => sub { shift->queue->_shift_worker };
 
 
 1;
@@ -26,7 +32,7 @@ YADA::Worker - "Yet Another Download Accelerator Worker": alias for AnyEvent::Ne
 
 =head1 VERSION
 
-version 0.045
+version 0.046
 
 =head1 WARNING: GONE MOO!
 

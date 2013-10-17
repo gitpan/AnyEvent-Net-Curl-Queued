@@ -3,7 +3,7 @@ NAME
     Net::Curl & AnyEvent
 
 VERSION
-    version 0.045
+    version 0.046
 
 SYNOPSIS
         #!/usr/bin/env perl
@@ -168,9 +168,8 @@ DESCRIPTION
         Queues are non-lazy, thus large ones can use many RAM;
 
     *   Parallel::Downloader: queued parallel downloads via AnyEvent::HTTP.
-        Very fast and is pure-Perl (compiling event driver is optional). You
-        only access results when the whole batch is done; so huge batches
-        will require lots of RAM to store contents.
+        Very fast and is pure-Perl (compiling event driver is optional). No
+        queue modification possible while batch is being processed.
 
   BENCHMARK
     (see also: CPAN modules for making HTTP requests
