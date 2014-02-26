@@ -43,7 +43,7 @@ has max         => (is => 'ro', isa => Num, default => sub { 4 });
 
 has timeout     => (is => 'ro', isa => Num, default => sub { 60.0 });
 
-our $VERSION = '0.046'; # VERSION
+our $VERSION = '0.047'; # VERSION
 
 
 sub BUILD {
@@ -188,7 +188,7 @@ __END__
 
 =pod
 
-=encoding utf8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -196,7 +196,7 @@ AnyEvent::Net::Curl::Queued::Multi - Net::Curl::Multi wrapped by Moo
 
 =head1 VERSION
 
-version 0.046
+version 0.047
 
 =head1 SYNOPSIS
 
@@ -282,6 +282,7 @@ Add one handle and kickstart download.
 
 =for Pod::Coverage BUILD
 BUILDARGS
+has_timer
 
 =head1 SEE ALSO
 
@@ -311,7 +312,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Stanislaw Pusep.
+This software is copyright (c) 2014 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

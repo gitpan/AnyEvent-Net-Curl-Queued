@@ -25,7 +25,7 @@ use Net::Curl::Share;
 
 use AnyEvent::Net::Curl::Queued::Multi;
 
-our $VERSION = '0.046'; # VERSION
+our $VERSION = '0.047'; # VERSION
 
 
 has allow_dups  => (is => 'ro', isa => Bool, default => sub { 0 });
@@ -239,7 +239,7 @@ __END__
 
 =pod
 
-=encoding utf8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -247,7 +247,7 @@ AnyEvent::Net::Curl::Queued - Moo wrapper for queued downloads via Net::Curl & A
 
 =head1 VERSION
 
-version 0.046
+version 0.047
 
 =head1 SYNOPSIS
 
@@ -617,6 +617,7 @@ Process queue.
 
 =for Pod::Coverage BUILD
 BUILDARGS
+has_watchdog
 
 =head1 CAVEAT
 
@@ -660,7 +661,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Stanislaw Pusep.
+This software is copyright (c) 2014 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

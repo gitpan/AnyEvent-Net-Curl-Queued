@@ -10,7 +10,7 @@ use Carp qw(carp);
 use Net::Curl::Easy;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '0.046'; # VERSION
+our $VERSION = '0.047'; # VERSION
 
 
 my (%const_info, %const_opt);
@@ -57,7 +57,7 @@ __END__
 
 =pod
 
-=encoding utf8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -65,7 +65,7 @@ AnyEvent::Net::Curl::Const - Access Net::Curl::* constants by name
 
 =head1 VERSION
 
-version 0.046
+version 0.047
 
 =head1 SYNOPSIS
 
@@ -174,7 +174,7 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Stanislaw Pusep.
+This software is copyright (c) 2014 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
